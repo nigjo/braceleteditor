@@ -2,7 +2,7 @@ import * as view from "./braceletview.js"
 console.group("INIT in");
 
 function loadPattern(patternName){
-  fetch('./'
+  fetch('./pattern/'
       +patternName
         .replaceAll('\\', '/')
         .replaceAll('../', '')
@@ -45,6 +45,34 @@ function loadPattern(patternName){
   });
 }
 
+function initKnownPatternList() {
+  fetch('pattern/_known.json').then(resp=>{
+    if(resp.ok)
+      return resp.json();
+    throw resp;
+  }).then(data=>{
+    if(data.version !== 1)
+      throw data;
+    const navparent = document.querySelector('nav #knownpattern');
+    const items = document.createDocumentFragment();
+    for(let info of data.pattern){
+      const item = document.createElement('li');
+      if(info.name !== window.currentPattern){
+        const link = document.createElement('a');
+        let q = new URLSearchParams();
+        q.set('pattern', info.name);
+        link.href = '?'+q;
+        link.textContent = info.displayName||info.name;
+        item.append(link);
+      } else {
+        item.textContent = info.displayName||info.name;
+      }
+      items.append(item);
+    }
+    navparent.replaceChildren(items);
+  });
+}
+
 function initPage(){
   console.debug(view);
   console.debug("init page");
@@ -53,7 +81,10 @@ function initPage(){
   var q = new URLSearchParams(location.search);
   if(q.has('pattern'))
     infile = q.get('pattern');
+  
+  window.currentPattern = infile;
  
+  initKnownPatternList();
   loadPattern(infile);
 }
 initPage();

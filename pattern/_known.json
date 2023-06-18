@@ -1,0 +1,17 @@
+{
+  "version":1,
+  "pattern":[
+    {
+      "name":"demo",
+      "displayName":"Basic Bracelet"
+    },
+    {
+      "name":"chevron",
+      "displayName":"Chevron Bracelet"
+    },
+    {
+      "name":"fire",
+      "displayName":"Fire"
+    }
+  ]
+}
