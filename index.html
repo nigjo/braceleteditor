@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Bracelet Threads</title>
+<link rel="stylesheet" type="text/css" href="res/braceletview.css">
+<link rel="stylesheet" type="text/css" href="res/braceletedit.css">
+<style>
+</style>
+<script type="module" src="res/braceletedit.js"></script>
+</head>
+<body>
+<header><h1>Bracelet Threads</h1></header>
+<nav><ul>
+<li></li>
+</ul></nav>
+<main><div>
+<h2>Ideenliste</h2>
+<ul>
+<li>Anzeige wie die bracelet SVGs</li>
+<li>Farbänderung per klick auf die Knoten</li>
+<li>Automatische Fadenführung suchen (Hauptzweck)</li>
+<li>"Optimierung" mit möglichst wenig "Wechselknoten"</li>
+<li>Export für braceletbook.com und friendship-bracelets.net</li>
+</ul>
+</div><div id="preview">
+</div><div id="editor"><form name="editor">
+  <div class="row">
+    <div id="colors">[colors]</div>
+  </div>
+  <div class="row">
+    <div class="left">
+      <input type="button" name="addStringL" value="+" title="add new string">
+      <input type="button" name="remStringL" value="-" title="remove new string">
+    </div>
+    <div class="center">
+    </div>
+    <div class="right">
+      <input type="button" name="addStringR" value="+" title="add new string">
+      <input type="button" name="remStringR" value="-" title="remove new string">
+    </div>
+  </div>
+  <div class="row">
+    <div class="left"></div>
+    <div id="pattern"></div>
+    <div class="right"></div>
+  </div>
+  <div class="row">
+  </div>
+</form></div>
+</main>
+<footer>&copy; 2023 Jens Hofschröer</footer>
+</body>
+</html>
