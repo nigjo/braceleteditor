@@ -28,13 +28,13 @@ export function createNormalPatternView(config) {
   let threads = [...config.threads];
   let colors = config.colors;
 
-  console.debug(LOGGER, pattern);
-  console.debug(LOGGER, threads);
-  console.debug(LOGGER, colors);
+  console.debug(LOGGER, 'colors', colors);
+  console.debug(LOGGER, 'threads', threads);
+  console.debug(LOGGER, 'pattern', pattern);
 
   let threadCount = pattern[0].length;
   let rowCount = pattern.length;
-  console.debug(LOGGER, threadCount, 'x', rowCount);
+//  console.debug(LOGGER, threadCount, 'x', rowCount);
 
   const root = new DocumentFragment();
   let svg = document.createElementNS(SVGNS, "svg");
@@ -78,12 +78,12 @@ export function createNormalPatternView(config) {
   svg.append(copy);
 
   root.append(svg);
-  console.debug(LOGGER, svg);
+//  console.debug(LOGGER, svg);
   return root;
 }
 
 function addRow(rownum, row, fullrow, threads) {
-  console.debug(rownum, row);
+//  console.debug(rownum, row);
 
   let rowGroup = document.createElementNS(SVGNS, "g");
   let x = fullrow ? 0 : (deltaX / 2);
@@ -160,7 +160,7 @@ function addRow(rownum, row, fullrow, threads) {
     // let rtop = document.createElementNS(SVGNS, "path");
     // knotGroup.append(rtop)
     let tidx = index * 2 - (fullrow ? 0 : 1);
-    console.debug(k, index, tidx, threads);
+//    console.debug(k, index, tidx, threads);
 
     addThread(-1, -1, threads[tidx]);
     addThread(1, -1, threads[tidx + 1]);
@@ -357,7 +357,7 @@ function createStyles(colors) {
 
   let acode = Number("A".charCodeAt(0));
   for (const i in colors) {
-    console.debug('COLORS', colors[i]);
+    //console.debug('COLORS', colors[i]);
     rules['.tcol_' + String.fromCodePoint(acode + Number(i))] = {
       'fill': '#' + (colors[i].replace('#', '')).toString(16).padStart(6, '0')
     };

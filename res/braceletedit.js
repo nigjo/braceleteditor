@@ -1,7 +1,7 @@
 import * as view from "./braceletview.js"
         console.group("INIT in");
 function loadPattern(patternName) {
-  fetch('./pattern/'
+  return fetch('./pattern/'
           + patternName
           .replaceAll('\\', '/')
           .replaceAll('../', '')
@@ -19,8 +19,8 @@ function loadPattern(patternName) {
       const svg = patternView.querySelector('svg');
       svg.setAttribute('xmlns', "http://www.w3.org/2000/svg");
       svg.setAttribute('version', "1.0");
-      console.debug(svg);
-      console.debug(svg.outerHTML);
+      //console.debug(svg);
+      //console.debug(svg.outerHTML);
       const uri = 'data:'
               + 'image/svg+xml'
               + ';name=pattern.svg'
@@ -45,7 +45,7 @@ function loadPattern(patternName) {
 }
 
 function initKnownPatternList() {
-  fetch('pattern/_known.json').then(resp => {
+  return fetch('pattern/_known.json').then(resp => {
     if (resp.ok)
       return resp.json();
     throw resp;
@@ -73,7 +73,7 @@ function initKnownPatternList() {
 }
 
 function initPage() {
-  console.debug(view);
+  //console.debug(view);
   console.debug("init page");
 
   var infile = 'demo';
@@ -83,9 +83,15 @@ function initPage() {
 
   window.currentPattern = infile;
 
-  initKnownPatternList();
-  loadPattern(infile);
+  Promise.all([
+    initKnownPatternList(),
+    loadPattern(infile)
+  ]).then(_ => {
+    console.debug("config files loaded.");
+    window.dispatchEvent(new CustomEvent('configLoaded'));
+  });
+  console.debug("waiting for config files to load...");
 }
 initPage();
 //export default initPage;
-console.groupEnd("INIT out");
+//console.groupEnd("INIT out");
