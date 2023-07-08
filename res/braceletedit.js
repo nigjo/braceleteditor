@@ -109,6 +109,7 @@ window.handleActions = function (event) {
   if (event.target.type && event.target.type === 'button') {
     const t = event.target;
     const config = window.currentConfig;
+    let changed = false;
     switch (t.name) {
       case 'addStringL':
       case 'addStringR':
@@ -119,6 +120,7 @@ window.handleActions = function (event) {
         for (let r of config.pattern) {
           r.splice(atleft ? 0 : r.length, 0, 1);
         }
+        changed = true;
         break;
       }
       case 'remStringL':
@@ -130,10 +132,13 @@ window.handleActions = function (event) {
         for (let r of config.pattern) {
           r.splice(atleft ? 0 : r.length - 1, 1);
         }
+        changed = true;
         break;
       }
     }
 
-    updatePattern(config);
+    if (changed) {
+      updatePattern(config);
+    }
   }
 };
