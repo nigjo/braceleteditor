@@ -13,35 +13,43 @@ function loadPattern(patternName) {
   }).then(config => {
     if (config._version === 1 &&
             config._format === 'braceletview') {
-      let patternView =
-              view.createNormalPatternView(config);
+      window.currentConfig = config
 
-      const svg = patternView.querySelector('svg');
-      svg.setAttribute('xmlns', "http://www.w3.org/2000/svg");
-      svg.setAttribute('version', "1.0");
-      //console.debug(svg);
-      //console.debug(svg.outerHTML);
-      const uri = 'data:'
-              + 'image/svg+xml'
-              + ';name=pattern.svg'
-              + ';base64'
-              + ','
-              + btoa(unescape(encodeURIComponent(svg.outerHTML)));
-      //const frame = document.createElement('img');
-      const frame = document.createElement('object');
-      //frame.src = uri;
-      frame.data = uri;
-      //frame.setAttribute('download', 'pattern.svg');
-      frame.type = 'image/svg+xml';
-      frame.width = svg.width.baseVal.value;
-      frame.height = svg.height.baseVal.value;
-      //frame.alt = 'Pattern';
-
-      document.getElementById('pattern').append(frame);
+      updatePattern(config);
     } else {
       throw 'no valid data found';
     }
   });
+}
+
+function updatePattern(config){
+  sessionStorage.setItem('braceletedit.config', JSON.stringify(config,' '));
+  let patternView =
+          view.createNormalPatternView(config);
+  const svg = patternView.querySelector('svg');
+  svg.setAttribute('xmlns', "http://www.w3.org/2000/svg");
+  svg.setAttribute('version', "1.0");
+  //console.debug(svg);
+  //console.debug(svg.outerHTML);
+  const uri = 'data:'
+          + 'image/svg+xml'
+          + ';name=pattern.svg'
+          + ';base64'
+          + ','
+          + btoa(unescape(encodeURIComponent(svg.outerHTML)));
+  //const frame = document.createElement('img');
+  const frame = document.createElement('object');
+  //frame.src = uri;
+  frame.data = uri;
+  //frame.setAttribute('download', 'pattern.svg');
+  frame.type = 'image/svg+xml';
+  frame.width = svg.width.baseVal.value;
+  frame.height = svg.height.baseVal.value;
+  //frame.alt = 'Pattern';
+  let parent = document.getElementById('pattern')
+  parent.style.width=frame.width+'px';
+  parent.style.height=frame.height+'px';
+  parent.replaceChildren(frame);
 }
 
 function initKnownPatternList() {
@@ -95,3 +103,26 @@ function initPage() {
 initPage();
 //export default initPage;
 //console.groupEnd("INIT out");
+
+
+window.handleActions = function (event){
+  if(event.target.type && event.target.type==='button'){
+    const t = event.target;
+    const config = window.currentConfig;
+    switch(t.name){
+      case 'addStringL':
+      case 'addStringR':
+        let threadCount = config.threads.length;
+        let atleft = t.name==='addStringL';
+        config.threads = atleft?('AA'+config.threads):(config.threads+'AA')
+        let index = atleft?0:threadCount;
+        console.debug(t.name, index);
+        for (let r of config.pattern) {
+          r.splice(index,0,1)
+        }
+        break;
+    }
+    
+    updatePattern(config);
+  }
+}

@@ -1,7 +1,14 @@
 :root{
 }
 
-.row{
-  display:grid;
-  grid-template-columns:1fr auto 1fr;
+.editorlayouter {
+	display: grid;
+	grid-template-columns: 1fr auto 1fr;
 }
+.row{
+	grid-column-start: 1;
+	grid-column-end: 4;
+}
+.left{text-align: right;}
+.center{text-align: center;}
+.right{text-align: left;}

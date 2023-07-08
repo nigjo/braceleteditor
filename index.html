@@ -29,28 +29,33 @@
 <li>Export für braceletbook.com und friendship-bracelets.net</li>
 </ul>
 </div><div id="preview">
-</div><div id="editor"><form name="editor">
-  <div class="row">
-    <div id="colors">[colors]</div>
+</div><div id="editor"><form name="editor" class="editorlayouter" onclick="handleActions(event);">
+  <div class="left">[colors]</div>
+  <div class="center"></div>
+  <div class="right"></div>
+  <div class="left">
+    <input type="button" name="addStringL" value="+" title="add new string">
+    <input type="button" name="remStringL" value="-" title="remove new string">
   </div>
-  <div class="row">
-    <div class="left">
-      <input type="button" name="addStringL" value="+" title="add new string">
-      <input type="button" name="remStringL" value="-" title="remove new string">
-    </div>
-    <div class="center">
-    </div>
-    <div class="right">
-      <input type="button" name="addStringR" value="+" title="add new string">
-      <input type="button" name="remStringR" value="-" title="remove new string">
-    </div>
+  <div class="center">
+    <input type="button" name="addRowT" value="+" title="add two new rows">
+    <input type="button" name="remRowT  " value="-" title="remove last two rows">
   </div>
-  <div class="row">
-    <div class="left"></div>
-    <div id="pattern"></div>
-    <div class="right"></div>
+  <div class="right">
+    <input type="button" name="addStringR" value="+" title="add new string">
+    <input type="button" name="remStringR" value="-" title="remove new string">
   </div>
-  <div class="row">
+  <!-- PATTERN START -->
+  <div class="left"></div>
+  <div id="pattern"></div>
+  <div class="right"></div>
+  <!-- PATTERN END -->
+  <div class="left"></div>
+  <div class="center">
+    <input type="button" name="addRowB" value="+" title="add two new rows">
+    <input type="button" name="remRowB" value="-" title="remove last two rows">
+  </div>
+  <div class="right">
   </div>
 </form></div>
 </main>
