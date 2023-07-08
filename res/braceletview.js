@@ -34,7 +34,7 @@ export function createNormalPatternView(config) {
 
   let threadCount = pattern[0].length;
   let rowCount = pattern.length;
-//  console.debug(LOGGER, threadCount, 'x', rowCount);
+  //console.debug(LOGGER, threadCount, 'x', rowCount);
 
   const root = new DocumentFragment();
   let svg = document.createElementNS(SVGNS, "svg");
@@ -63,12 +63,14 @@ export function createNormalPatternView(config) {
   let y = deltaY / 2;
   let rownum = 1;
   for (let r of pattern) {
+    rowgroup.append(document.createComment(current.join('')));
     let row = addRow(rownum++, r, r.length === threadCount, current);
     row.setAttribute('transform', 'translate(' + 20 + ',' + y + ')');
     rowgroup.append(row);
 
     y += deltaY;
   }
+  rowgroup.append(document.createComment(current.join('')))
 
   const copy = document.createElementNS(SVGNS, "text");
   copy.textContent = '© 2023 braceletview by nigjo';
