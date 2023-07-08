@@ -1,0 +1,35 @@
+{
+  "_version":1,
+  "_format":"braceletview",
+  "meta":{
+    "author":"nigjo",
+    "braceletbook.com-id":"",
+    "displayName": "Chevron Bracelet"
+  },
+  "colors":[
+    "#FF0000",
+    "#FFFF00",
+    "#00FF00",
+    "#00FFFF",
+    "#0000FF",
+    "#FF8000",
+    "#80FF00",
+    "#00FF80",
+    "#0080FF",
+    "#8000FF",
+    "#FF0080"
+  ],
+  "threads":"ABECDDCEBA",
+  "pattern":[
+      [1,1,1,2,2],
+       [1,1,2,2],
+      [1,1,1,2,2],
+       [1,1,2,2],
+      [1,1,1,2,2],
+       [1,1,2,2],
+      [1,1,1,2,2],
+       [1,1,2,2],
+      [1,1,1,2,2],
+       [1,1,2,2]
+    ]
+}

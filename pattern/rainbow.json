@@ -1,0 +1,32 @@
+{
+  "_version":1,
+  "_format":"braceletview",
+  "meta":{
+    "author":"nigjo",
+    "braceletbook.com-id":"",
+    "displayName":"Rainbow"
+  },
+  "colors":[
+    "#FF0000",
+    "#FF8000",
+    "#FFFF00",
+    "#00FF00",
+    "#0000FF",
+    "#8000FF"
+  ],
+  "threads":"BCADFE",
+  "pattern":[
+      [1,1,1],
+       [1,1],
+      [1,1,1],
+       [1,1],
+      [1,1,1],
+       [1,1],
+      [1,1,1],
+       [1,1],
+      [1,1,1],
+       [1,1],
+      [1,1,1],
+       [1,1]
+    ]
+}

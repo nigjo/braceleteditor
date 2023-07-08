@@ -1,0 +1,34 @@
+{
+  "_version":1,
+  "_format":"braceletview",
+  "meta":{
+    "author":"nigjo",
+    "braceletbook.com-id":"",
+    "displayName":"Pinwheel (clockwise)"
+  },
+  "colors":[
+    "#ffddbb",
+    "#663300"
+  ],
+  "threads":"ABBAABBA",
+  "pattern":[
+      [1,1,1,2],
+       [1,1,1],
+      [2,2,1,2],
+       [1,1,1],
+      [2,1,2,2],
+       [1,1,1],
+      [2,1,1,1],
+       [1,1,1]
+    ],
+  "bbpattern":[
+    "f,f,f,b",
+     "f,f,f",
+    "b,b,f,b",
+     "f,f,f",
+    "b,f,b,b",
+     "f,f,f",
+    "b,f,f,f",
+     "f,f,f"
+  ]
+}

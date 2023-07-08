@@ -3,7 +3,8 @@
   "_format":"braceletview",
   "meta":{
     "author":"nigjo",
-    "braceletbook.com-id":""
+    "braceletbook.com-id":"",
+    "displayName":"Basic Bracelet"
   },
   "colors":[
     "#FF0000",

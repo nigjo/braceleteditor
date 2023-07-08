@@ -2,16 +2,36 @@
   "version":1,
   "pattern":[
     {
-      "name":"demo",
-      "displayName":"Basic Bracelet"
-    },
-    {
       "name":"chevron",
       "displayName":"Chevron Bracelet"
     },
     {
+      "name":"demo",
+      "displayName":"Basic Bracelet"
+    },
+    {
       "name":"fire",
       "displayName":"Fire"
+    },
+    {
+      "name":"necklace",
+      "displayName":"Ruby Necklace"
+    },
+    {
+      "name":"pinwheel-left",
+      "displayName":"Pinwheel (counter clockwise)"
+    },
+    {
+      "name":"pinwheel-right",
+      "displayName":"Pinwheel (clockwise)"
+    },
+    {
+      "name":"plus1",
+      "displayName":"plus1"
+    },
+    {
+      "name":"rainbow",
+      "displayName":"Rainbow"
     }
   ]
 }
