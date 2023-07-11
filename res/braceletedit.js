@@ -24,32 +24,16 @@ function loadPattern(patternName) {
 
 function updatePattern(config) {
   sessionStorage.setItem('braceletedit.config', JSON.stringify(config, ' '));
+
+  let patternDiv = document.getElementById('pattern');
   let patternView =
           view.createNormalPatternView(config);
-  const svg = patternView.querySelector('svg');
-  svg.setAttribute('xmlns', "http://www.w3.org/2000/svg");
-  svg.setAttribute('version', "1.0");
-  //console.debug(svg);
-  //console.debug(svg.outerHTML);
-  const uri = 'data:'
-          + 'image/svg+xml'
-          + ';name=pattern.svg'
-          + ';base64'
-          + ','
-          + btoa(unescape(encodeURIComponent(svg.outerHTML)));
-  //const frame = document.createElement('img');
-  const frame = document.createElement('object');
-  //frame.src = uri;
-  frame.data = uri;
-  //frame.setAttribute('download', 'pattern.svg');
-  frame.type = 'image/svg+xml';
-  frame.width = svg.width.baseVal.value;
-  frame.height = svg.height.baseVal.value;
-  //frame.alt = 'Pattern';
-  let parent = document.getElementById('pattern');
-  parent.style.width = frame.width + 'px';
-  parent.style.height = frame.height + 'px';
-  parent.replaceChildren(frame);
+  const patternSvg = patternView.querySelector('svg');
+  patternDiv.style.width = patternSvg.width.baseVal.value + 'px';
+  patternDiv.style.height = patternSvg.height.baseVal.value + 'px';
+  const patternShadow = patternDiv.attachShadow({ mode: "open" });
+  patternShadow.replaceChildren(patternView);
+
 }
 
 function initKnownPatternList() {
@@ -106,8 +90,10 @@ initPage();
 
 
 window.handleActions = function (event) {
-  if (event.target.type && event.target.type === 'button') {
-    const t = event.target;
+  const t = event.target;
+  event.stopPropagation();
+
+  if (t.type && t.type === 'button') {
     const config = window.currentConfig;
     let changed = false;
     switch (t.name) {
@@ -135,10 +121,14 @@ window.handleActions = function (event) {
         changed = true;
         break;
       }
+      default:
+        console.debug('handleActions', t.name, t);
     }
 
     if (changed) {
       updatePattern(config);
     }
+  } else {
+    console.debug('handleActions', t);
   }
 };
