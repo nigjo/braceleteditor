@@ -14,12 +14,12 @@
 </head>
 <body>
 <header><h1>Bracelet Threads</h1></header>
-<nav><ul id="mainmenu">
+<nav class="noprint"><ul id="mainmenu">
 <li></li>
 </ul><ul id="knownpattern">
 <li></li>
 </ul></nav>
-<main><div>
+<main><div class="noprint">
 <h2>Ideenliste</h2>
 <ul>
 <li>Anzeige wie die bracelet SVGs</li>
@@ -33,25 +33,25 @@
   <div class="left">[colors]</div>
   <div class="center"></div>
   <div class="right"></div>
-  <div class="left">
+  <div class="left actions">
     <input type="button" name="addStringL" value="+" title="add new string">
     <input type="button" name="remStringL" value="-" title="remove new string">
   </div>
-  <div class="center">
+  <div class="center actions">
     <input type="button" name="addRowT" value="+" title="add two new rows">
     <input type="button" name="remRowT  " value="-" title="remove last two rows">
   </div>
-  <div class="right">
+  <div class="right actions">
     <input type="button" name="addStringR" value="+" title="add new string">
     <input type="button" name="remStringR" value="-" title="remove new string">
   </div>
   <!-- PATTERN START -->
   <div class="left"></div>
-  <div id="pattern"></div>
+  <div id="pattern" onclick="handleActions(event);"></div>
   <div class="right"></div>
   <!-- PATTERN END -->
   <div class="left"></div>
-  <div class="center">
+  <div class="center actions">
     <input type="button" name="addRowB" value="+" title="add two new rows">
     <input type="button" name="remRowB" value="-" title="remove last two rows">
   </div>
