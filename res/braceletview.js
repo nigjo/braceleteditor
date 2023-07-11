@@ -11,16 +11,7 @@ const tx = hx / 4; // thread-X
 const ty = hy / 4; // thread-Y
 
 /**
- * @param pattern Array Zeilen des Pattern. Jede 2. Zeile ist um
- *    einen kürzer als die vorherige (bei "Normal Pattern")
- *    Knoten sind mit 0=undefined, 1=f,2=b,3=fb,4=bf beschrieben.
- * @param threads Array Definiert die Farbzuordnung der Fäden. die
- *    Farben müssen denen aus {@code colors} entsprechen. Index 0 ist
- *    als 'A' beschrieben usw. Die Laenge muss der ersten Zeile aus
- *    {@code pattern} entsprechen.
- * @param colors Array Farbwerte die im Pattern verwendet werden. Jede
- *    Farbe muss nur einmal definiert werden. Die Zuordnung erfolgt in
- *    {@code threads}.
+ * @param config Object mit allen Einstellungen
  */
 export function createNormalPatternView(config) {
 
@@ -38,6 +29,8 @@ export function createNormalPatternView(config) {
 
   const root = new DocumentFragment();
   let svg = document.createElementNS(SVGNS, "svg");
+  svg.setAttribute('xmlns', "http://www.w3.org/2000/svg");
+  svg.setAttribute('version', "1.0");
 
   let width = Math.floor(threadCount * deltaX) + 2 * 20;
   let height = Math.floor((rowCount + 1) * deltaY + 16);
@@ -70,7 +63,7 @@ export function createNormalPatternView(config) {
 
     y += deltaY;
   }
-  rowgroup.append(document.createComment(current.join('')))
+  rowgroup.append(document.createComment(current.join('')));
 
   const copy = document.createElementNS(SVGNS, "text");
   copy.textContent = '© 2023 braceletview by nigjo';
