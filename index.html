@@ -1,64 +1,67 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="UTF-8">
-<title>Bracelet Threads</title>
-<link rel="icon" type="image/png" href="res/favicon64.png" sizes="64x64">
-<link rel="icon" type="image/png" href="res/favicon128.png" sizes="128x128">
-<link rel="icon" type="image/png" href="res/favicon256.png" sizes="256x256">
-<link rel="stylesheet" type="text/css" href="res/braceletview.css">
-<link rel="stylesheet" type="text/css" href="res/braceletedit.css">
-<style>
-</style>
-<script type="module" src="res/braceletedit.js"></script>
-</head>
-<body>
-<header><h1>Bracelet Threads</h1></header>
-<nav class="noprint"><ul id="mainmenu">
-<li></li>
-</ul><ul id="knownpattern">
-<li></li>
-</ul></nav>
-<main><div class="noprint">
-<h2>Ideenliste</h2>
-<ul data-expand="false">
-<li>Anzeige wie die bracelet SVGs</li>
-<li>Farbänderung per klick auf die Knoten</li>
-<li>Automatische Fadenführung suchen (Hauptzweck)</li>
-<li>"Optimierung" mit möglichst wenig "Wechselknoten"</li>
-<li>Export für braceletbook.com und friendship-bracelets.net</li>
-</ul>
-</div><div id="preview">
-</div><div id="editor"><form name="editor" class="editorlayouter" onclick="handleActions(event);">
-  <div class="left">[colors]</div>
-  <div class="center"></div>
-  <div class="right"></div>
-  <div class="left actions">
-    <input type="button" name="addStringL" value="+" title="add new string">
-    <input type="button" name="remStringL" value="-" title="remove new string">
-  </div>
-  <div class="center actions">
-    <input type="button" name="addRowT" value="+" title="add two new rows">
-    <input type="button" name="remRowT  " value="-" title="remove last two rows">
-  </div>
-  <div class="right actions">
-    <input type="button" name="addStringR" value="+" title="add new string">
-    <input type="button" name="remStringR" value="-" title="remove new string">
-  </div>
-  <!-- PATTERN START -->
-  <div class="left"></div>
-  <div id="pattern" onclick="handleActions(event);"></div>
-  <div class="right"></div>
-  <!-- PATTERN END -->
-  <div class="left"></div>
-  <div class="center actions">
-    <input type="button" name="addRowB" value="+" title="add two new rows">
-    <input type="button" name="remRowB" value="-" title="remove last two rows">
-  </div>
-  <div class="right">
-  </div>
-</form></div>
-</main>
-<footer>&copy; 2023 Jens Hofschröer - <a href="https://github.com/nigjo/braceleteditor/">View on Github</a></footer>
-</body>
+  <head>
+    <meta charset="UTF-8">
+    <title>Bracelet Threads</title>
+    <link rel="icon" type="image/png" href="res/favicon64.png" sizes="64x64">
+    <link rel="icon" type="image/png" href="res/favicon128.png" sizes="128x128">
+    <link rel="icon" type="image/png" href="res/favicon256.png" sizes="256x256">
+    <link rel="stylesheet" type="text/css" href="res/braceletview.css">
+    <link rel="stylesheet" type="text/css" href="res/braceletedit.css">
+    <style>
+    </style>
+    <script type="module" src="res/braceletedit.js"></script>
+  </head>
+  <body>
+    <header><h1>Bracelet Threads</h1></header>
+    <nav class="noprint"><ul id="mainmenu">
+        <li></li>
+      </ul><ul id="knownpattern">
+        <li></li>
+      </ul></nav>
+    <main>
+      <div class="noprint">
+        <h2>Ideenliste</h2>
+        <ul data-expand="false">
+          <li>Anzeige wie die bracelet SVGs</li>
+          <li>Farbänderung per klick auf die Knoten</li>
+          <li>Automatische Fadenführung suchen (Hauptzweck)</li>
+          <li>"Optimierung" mit möglichst wenig "Wechselknoten"</li>
+          <li>Export für braceletbook.com und friendship-bracelets.net</li>
+        </ul>
+      </div><div id="preview">
+      </div><div id="editor">
+        <form name="editor" class="editorlayouter" onclick="handleActions(event);">
+          <div class="left">[colors]</div>
+          <div class="center"></div>
+          <div class="right"></div>
+          <div class="left actions">
+            <input type="button" name="addStringL" value="+" title="add new string">
+            <input type="button" name="remStringL" value="-" title="remove new string">
+          </div>
+          <div class="center actions">
+            <input type="button" name="addRowT" value="+" title="add two new rows">
+            <input type="button" name="remRowT  " value="-" title="remove last two rows">
+          </div>
+          <div class="right actions">
+            <input type="button" name="addStringR" value="+" title="add new string">
+            <input type="button" name="remStringR" value="-" title="remove new string">
+          </div>
+          <!-- PATTERN START -->
+          <div class="left"></div>
+          <div id="pattern" onclick="handleActions(event);"></div>
+          <div class="right"></div>
+          <!-- PATTERN END -->
+          <div class="left"></div>
+          <div class="center actions">
+            <input type="button" name="addRowB" value="+" title="add two new rows">
+            <input type="button" name="remRowB" value="-" title="remove last two rows">
+          </div>
+          <div class="right">
+          </div>
+        </form>
+      </div>
+    </main>
+    <footer>&copy; 2023 Jens Hofschröer - <a href="https://github.com/nigjo/braceleteditor/">View on Github</a></footer>
+  </body>
 </html>
