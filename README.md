@@ -1,5 +1,7 @@
 # Bracelet Editor
 
+![Sample Pattern View](res/favicon256.png)
+
 This is an attempt to create an editor for friendship bracelets
 as the mayor sites for friendship bracelets already have.
 The goal is to create an editor that is knot-color based and
