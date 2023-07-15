@@ -272,6 +272,7 @@ export function createNormalPatternView(config) {
 
   svg.setAttribute("viewBox",
           [0, 0, width, height].join(' '));
+  svg.setAttribute("preserveAspectRatio", "xMinYMin meet");
 
   let defs = document.createElementNS(SVGNS, "defs");
   let arrows = createArrows();
@@ -401,6 +402,7 @@ export function createSmallView(config) {
 
   svg.setAttribute("viewBox",
           [0, 0, width, height].join(' '));
+  svg.setAttribute("preserveAspectRatio", "xMinYMin meet");
 
   let defs = document.createElementNS(SVGNS, "defs");
   //let arrows = createArrows();
