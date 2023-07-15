@@ -309,11 +309,139 @@ export function createNormalPatternView(config) {
   return root;
 }
 
-export function createSmallView(pattern, threads) {
+export function createSmallView(config) {
+
+  const SV_RX = 5;
+  //const SV_RY = SV_RX * 2 / 3;
+//  const SV_RY = SV_RX * 3 / 4;
+  const SV_RY = SV_RX * 4 / 3;
+//  const SV_RY = SV_RX;
+
+  const SV_DELTA_X = 1.75 * SV_RX;
+  const SV_DELTA_Y = 2 * SV_RY;
+
+  const SV_MAX_LENGTH = 60;
+
+  function addRow(row, fullrow, threads) {
+    let rowGroup = document.createElementNS(SVGNS, "g");
+    //let x = fullrow ? 0 : (deltaX / 2);
+    let index = fullrow ? 0 : 1;
+    //console.debug('ADDROW', threads);
+
+    let y = SV_DELTA_Y * (row.length - 1) - fullrow ? 0 : SV_RY;
+
+    for (let k of row) {
+      let tidx = index * 2 - (fullrow ? 0 : 1);
+      let knotcol = threads[tidx];
+      switch (k) {
+        case 2: // 'b'
+          knotcol = threads[tidx + 1];
+          //kein break!
+        case 1: // 'f'
+          // faeden tauschen
+          let tmp = threads[tidx];
+          threads[tidx] = threads[tidx + 1];
+          threads[tidx + 1] = tmp;
+          break;
+        case 4: // 'bf'
+          knotcol = threads[tidx + 1];
+          break;
+        case 3: // 'fb'
+          // keine Aenderung
+          break;
+      }
+
+      let knotGroup = document.createElementNS(SVGNS, "g");
+      knotGroup.setAttribute('transform',
+              'translate(' + 0 + ',' + y + ')');
+//        <ellipse cx="0" cy="0" rx="30" ry="20" class="tcol_A"></ellipse>        
+//        <ellipse cx="0" cy="0" rx="30" ry="20" class="border" stroke="none"></ellipse>      
+      let knot = document.createElementNS(SVGNS, "ellipse");
+      knot.setAttribute("cx", 0);
+      knot.setAttribute("cy", 0);
+      knot.setAttribute("rx", SV_RX);
+      knot.setAttribute("ry", SV_RY);
+      knot.setAttribute("class", "tcol_" + knotcol);//TODO:farbe?
+      knotGroup.append(knot);
+      let knotb = knot.cloneNode();
+      knotb.setAttribute("class", "border");
+      knotGroup.append(knotb);
+
+      rowGroup.append(knotGroup);
+
+      y -= SV_DELTA_Y;
+      ++index;
+    }
+    return rowGroup;
+  }
+
+  let pattern = config.pattern;
+  let threads = [...config.threads];
+  let colors = config.colors;
+
+  console.debug(LOGGER, 'colors', colors);
+  console.debug(LOGGER, 'threads', threads);
+  console.debug(LOGGER, 'pattern', pattern);
+
+  let threadCount = pattern[0].length;
+  let rowCount = pattern.length;
+  //console.debug(LOGGER, threadCount, 'x', rowCount);
+  let maxrows = Math.max(SV_MAX_LENGTH, Math.floor(rowCount * 1.5));
+
   const root = new DocumentFragment();
   let svg = document.createElementNS(SVGNS, "svg");
+  svg.setAttribute('xmlns', "http://www.w3.org/2000/svg");
+  svg.setAttribute('version', "1.0");
+
+  let width = Math.floor((maxrows + 1) * SV_DELTA_X);
+  let height = Math.floor((threadCount + 1) * SV_DELTA_Y + 24);
+
+  svg.setAttribute("width", width);
+  svg.setAttribute("height", height);
+
+  svg.setAttribute("viewBox",
+          [0, 0, width, height].join(' '));
+
+  let defs = document.createElementNS(SVGNS, "defs");
+  //let arrows = createArrows();
+  //defs.append(arrows);
+  let styles = createStyles(colors, SV_RX);
+  defs.append(styles);
+  svg.append(defs);
+
+  let rowgroup = document.createElementNS(SVGNS, "g");
+  svg.append(rowgroup);
+
+  let current = threads;
+
+  let x = SV_RX * 1.5;
+  let y = SV_DELTA_Y * (pattern[0].length);
+  let ymax = y * 2 - SV_RY;
+  do {
+    for (let r of pattern) {
+      rowgroup.append(document.createComment(current.join('')));
+      let row = addRow(r, r.length === threadCount, current);
+      row.setAttribute('transform', 'translate(' + x + ',' + y + ')');
+      rowgroup.append(row);
+      x += SV_DELTA_X;
+      y = ymax - y;
+      if (--maxrows <= 0)
+        break;
+    }
+    if (maxrows <= 0)
+      break;
+  } while (true);
+  rowgroup.append(document.createComment(current.join('')));
+
+  const copy = document.createElementNS(SVGNS, "text");
+  copy.textContent = '© 2023 braceletview by nigjo';
+  copy.setAttribute('class', 'hint');
+  copy.setAttribute('x', 4);
+  copy.setAttribute('y', height - 8);
+  svg.append(copy);
 
   root.append(svg);
+//  console.debug(LOGGER, svg);
   return root;
 }
 
