@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html data-bs-theme="auto">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -13,6 +13,7 @@
     <link rel="stylesheet" type="text/css" href="res/braceletedit.css">
     <link rel="stylesheet" type="text/css" href="res/bootstrap/css/bootstrap.min.css">
     <script type="module" src="res/braceletedit.js"></script>
+    <script src="res/themeforbootstrap.js"></script>
   </head>
   <body>
     <header><h1>Bracelet Threads</h1></header>
@@ -32,11 +33,37 @@
               <ul class="dropdown-menu" id="knownpattern">
               </ul>
             </li>
-            <li>
+            <li class="nav-item">
               <a class="nav-link" href="#"
                  data-bs-toggle="collapse"
                  data-bs-target="#collapseOne" aria-expanded="false"
                  aria-controls="collapseOne">Ideenliste</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" id="bd-theme" title="Farbschema"
+                 href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <svg class="bi theme-icon-active" style="width:.9em;height:.9em" fill="currentColor"><use
+                  xlink:href="res/bootstrap-icons/bootstrap-icons.svg#sun"></use></svg>
+                <span id="bd-theme-text" style="display:none">Farbschema</span>
+              </a>
+              <ul class="dropdown-menu">
+                <li class="dropdown-item">
+              <div data-bs-theme-value="light">
+                <svg class="bi" style="width:.9em;height:.9em" fill="currentColor"><use
+                  xlink:href="res/bootstrap-icons/bootstrap-icons.svg#sun"></use></svg>
+                hell</div>
+                </li><li class="dropdown-item">
+              <div data-bs-theme-value="dark">
+                <svg class="bi" style="width:.9em;height:.9em" fill="currentColor"><use
+                  xlink:href="res/bootstrap-icons/bootstrap-icons.svg#moon-stars"></use></svg>
+                dunkel</div>
+                </li><li class="dropdown-item">
+              <div data-bs-theme-value="auto">
+                <svg class="bi" style="width:.9em;height:.9em" fill="currentColor"><use
+                  xlink:href="res/bootstrap-icons/bootstrap-icons.svg#toggles"></use></svg>
+                Standard</div>
+                </li>
+              </ul>
             </li>
           </ul>
         </div>
