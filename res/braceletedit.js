@@ -31,7 +31,8 @@ function updatePattern(config) {
   const patternSvg = patternView.querySelector('svg');
   patternDiv.style.width = patternSvg.width.baseVal.value + 'px';
   patternDiv.style.height = patternSvg.height.baseVal.value + 'px';
-  const patternShadow = patternDiv.attachShadow({ mode: "open" });
+  addConfigToSvg(patternSvg, config);
+  const patternShadow = patternDiv.attachShadow({mode: "open"});
   patternShadow.replaceChildren(patternView);
 
   let previewDiv = document.getElementById('preview');
@@ -39,8 +40,35 @@ function updatePattern(config) {
   const previewSvg = previewView.querySelector('svg');
   previewDiv.style.width = previewSvg.width.baseVal.value + 'px';
   previewDiv.style.height = previewSvg.height.baseVal.value + 'px';
-  const previewShadow = previewDiv.attachShadow({ mode: "open" });
+  addConfigToSvg(previewSvg, config);
+  const previewShadow = previewDiv.attachShadow({mode: "open"});
   previewShadow.replaceChildren(previewView);
+}
+
+function set(svg, config) {
+}
+
+function addConfigToSvg(svg, config) {
+  let meta = svg.querySelector("defs metadata");
+  if (!meta) {
+    let defs = svg.querySelector("defs");
+    if (!defs) {
+      defs = document.createElementNS(svg.namespaceURI, 'defs');
+      svg.insertAdjacentElement("afterbegin", defs);
+    }
+    meta = document.createElementNS(svg.namespaceURI, 'metadata');
+    defs.append(meta);
+  }
+
+  const NS_META = 'urn:de.nigjo:threadedit:config';
+  let metaConfigElement = document.createElementNS(NS_META, 'config');
+  metaConfigElement.setAttribute("xmlns", NS_META);
+  let contentText = JSON.stringify(config);
+  console.debug(contentText);
+  let content = document.createTextNode(contentText);
+  metaConfigElement.append(content);
+
+  meta.append(metaConfigElement);
 }
 
 function initKnownPatternList() {
@@ -55,16 +83,18 @@ function initKnownPatternList() {
     const items = document.createDocumentFragment();
     for (let info of data.pattern) {
       const item = document.createElement('li');
+      item.classList.add("dropdown-item");
+      const link = document.createElement('a');
+      link.classList.add("nav-link");
       if (info.name !== window.currentPattern) {
-        const link = document.createElement('a');
         let q = new URLSearchParams();
         q.set('pattern', info.name);
         link.href = '?' + q;
-        link.textContent = info.displayName || info.name;
-        item.append(link);
       } else {
-        item.textContent = info.displayName || info.name;
+        link.classList.add("disabled");
       }
+      link.textContent = info.displayName || info.name;
+      item.append(link);
       items.append(item);
     }
     navparent.replaceChildren(items);
