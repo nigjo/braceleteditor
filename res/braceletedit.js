@@ -25,24 +25,8 @@ function loadPattern(patternName) {
 function updatePattern(config) {
   sessionStorage.setItem('braceletedit.config', JSON.stringify(config, ' '));
 
-  let patternDiv = document.getElementById('pattern');
-  let patternView =
-          view.createNormalPatternView(config);
-  const patternSvg = patternView.querySelector('svg');
-  patternDiv.style.width = patternSvg.width.baseVal.value + 'px';
-  patternDiv.style.height = patternSvg.height.baseVal.value + 'px';
-  addConfigToSvg(patternSvg, config);
-  const patternShadow = patternDiv.attachShadow({mode: "open"});
-  patternShadow.replaceChildren(patternView);
-
-  let previewDiv = document.getElementById('preview');
-  let previewView = view.createSmallView(config);
-  const previewSvg = previewView.querySelector('svg');
-  previewDiv.style.width = previewSvg.width.baseVal.value + 'px';
-  previewDiv.style.height = previewSvg.height.baseVal.value + 'px';
-  addConfigToSvg(previewSvg, config);
-  const previewShadow = previewDiv.attachShadow({mode: "open"});
-  previewShadow.replaceChildren(previewView);
+  addSvg('pattern', view.createNormalPatternView, config);
+  addSvg('preview', view.createSmallView, config);
 
   let bbLink = document.getElementById("braceletbook-link");
   if (config.meta && "braceletbook.com-id" in config.meta) {
@@ -64,7 +48,26 @@ function updatePattern(config) {
   }
 }
 
-function set(svg, config) {
+function addSvg(parentId, generator, config) {
+
+  let patternView = generator(config);
+
+  const patternSvg = patternView.querySelector('svg');
+  addConfigToSvg(patternSvg, config);
+  let width = patternSvg.width.baseVal.value;
+  let height = patternSvg.height.baseVal.value;
+
+  patternSvg.style.maxWidth = '90vw';
+  patternSvg.style.maxHeight = 'calc(90vw / ' + width + ' * ' + height + ')';
+
+  let patternDiv = document.getElementById(parentId);
+  patternDiv.style.width = width + 'px';
+  patternDiv.style.height = height + 'px';
+  patternDiv.style.maxWidth = '90vw';
+  patternDiv.style.maxHeight = 'calc(90vw / ' + width + ' * ' + height + ')';
+
+  const patternShadow = patternDiv.attachShadow({mode: "open"});
+  patternShadow.replaceChildren(patternView);
 }
 
 function addConfigToSvg(svg, config) {
