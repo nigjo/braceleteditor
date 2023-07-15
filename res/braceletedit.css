@@ -17,3 +17,13 @@
   .noprint,.actions{display:none;}
   #pattern,#pattern svg{max-height: 85vh;}
 }
+
+nav ul li {
+  display: inline-block;
+}
+nav ul li:after{
+  content: ''
+}
+nav ul li+li:before{
+  content: ' · '
+}
