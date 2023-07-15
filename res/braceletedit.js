@@ -43,6 +43,25 @@ function updatePattern(config) {
   addConfigToSvg(previewSvg, config);
   const previewShadow = previewDiv.attachShadow({mode: "open"});
   previewShadow.replaceChildren(previewView);
+
+  let bbLink = document.getElementById("braceletbook-link");
+  if (config.meta && "braceletbook.com-id" in config.meta) {
+    //https://www.braceletbook.com/patterns/normal/150421/
+    let type = ("braceletbook.com-type" in config.meta) ?
+            config.meta["braceletbook.com-type"] : "normal";
+    let orgOrVar = ("braceletbook.com-variation" in config.meta)
+            && config.meta["braceletbook.com-variation"] ? "variations" : "patterns";
+    let linkHref =
+            "https://www.braceletbook.com/"
+            + orgOrVar + "/"
+            + type + "/"
+            + config.meta["braceletbook.com-id"] + "/";
+    bbLink.href = linkHref;
+    bbLink.title = bbLink.dataset.altTitle;
+  } else {
+    bbLink.href = "https://www.braceletbook.com/";
+    bbLink.title = bbLink.dataset.title;
+  }
 }
 
 function set(svg, config) {
