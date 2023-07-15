@@ -321,7 +321,7 @@ export function createSmallView(config) {
   const SV_DELTA_X = 1.75 * SV_RX;
   const SV_DELTA_Y = 2 * SV_RY;
 
-  const SV_MAX_LENGTH = 60;
+  const SV_MAX_LENGTH = 100;
 
   function addRow(row, fullrow, threads) {
     let rowGroup = document.createElementNS(SVGNS, "g");
