@@ -6,33 +6,58 @@
     <link rel="icon" type="image/png" href="res/favicon64.png" sizes="64x64">
     <link rel="icon" type="image/png" href="res/favicon128.png" sizes="128x128">
     <link rel="icon" type="image/png" href="res/favicon256.png" sizes="256x256">
+    <link rel="stylesheet" type="text/css" href="res/bootstrap/css/bootstrap.min.css">
+    <!--<link rel="stylesheet" type="text/css" href="res/bootstrap-icons/font/bootstrap-icons.min.css">-->
     <link rel="stylesheet" type="text/css" href="res/braceletview.css">
     <link rel="stylesheet" type="text/css" href="res/braceletedit.css">
-    <style>
-    </style>
+    <link rel="stylesheet" type="text/css" href="res/bootstrap/css/bootstrap.min.css">
     <script type="module" src="res/braceletedit.js"></script>
   </head>
   <body>
     <header><h1>Bracelet Threads</h1></header>
-    <nav class="noprint"><ul id="mainmenu">
-        <li></li>
-      </ul><ul id="knownpattern">
-        <li></li>
-      </ul></nav>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+      <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div id="navbarSupportedContent" class="collapse navbar-collapse">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="mainmenu">
+            <li class="nav-item"><a class="nav-link" href="./">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="https://github.com/nigjo/braceleteditor/">Github Project</a></li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Beispiele
+              </a>
+              <ul class="dropdown-menu" id="knownpattern">
+              </ul>
+            </li>
+            <li>
+              <a class="nav-link" href="#"
+                 data-bs-toggle="collapse"
+                 data-bs-target="#collapseOne" aria-expanded="false"
+                 aria-controls="collapseOne">Ideenliste</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
     <main>
-      <div class="noprint">
-        <h2>Ideenliste</h2>
-        <ul data-expand="false">
-          <li>Anzeige wie die bracelet SVGs</li>
-          <li>Farbänderung per klick auf die Knoten</li>
-          <li>Automatische Fadenführung suchen (Hauptzweck)</li>
-          <li>"Optimierung" mit möglichst wenig "Wechselknoten"</li>
-          <li>Export für braceletbook.com und friendship-bracelets.net</li>
-        </ul>
+      <div id="brainstorming">
+        <div id="collapseOne" class="collapse"
+             data-bs-parent="#brainstorming">
+          <h3>Ideenliste</h3>
+          <ul class="card card-body">
+            <li>Anzeige wie die bracelet SVGs</li>
+            <li>Farbänderung per klick auf die Knoten</li>
+            <li>Automatische Fadenführung suchen (Hauptzweck)</li>
+            <li>"Optimierung" mit möglichst wenig "Wechselknoten"</li>
+            <li>Export für braceletbook.com und friendship-bracelets.net</li>
+          </ul>
+        </div>
+      </div><div id="settings">
       </div><div id="preview">
-      </div><div id="editor">
-        <form name="editor" class="editorlayouter" onclick="handleActions(event);">
-          <div class="left">[colors]</div>
+      </div><div id="editor"><form name="editor" class="editorlayouter" onclick="handleActions(event);">
+          <div class="left"></div>
           <div class="center"></div>
           <div class="right"></div>
           <div class="left actions">
@@ -59,9 +84,31 @@
           </div>
           <div class="right">
           </div>
-        </form>
-      </div>
+        </form></div>
     </main>
-    <footer>&copy; 2023 Jens Hofschröer - <a href="https://github.com/nigjo/braceleteditor/">View on Github</a></footer>
+    <div class="container">
+      <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+        <div class="col-md-4 d-flex align-items-center">
+          <a href="/" class="mb-3 me-2 mb-md-0 text-body-secondary text-decoration-none lh-1">
+            <img src="res/favicon64.png" style="height:1.5em;width:1.5em;"
+                 width="24" height="24" alt="favicon">
+          </a>
+          <span class="mb-3 mb-md-0 text-body-secondary">© 2023 Jens Hofschröer</span>
+        </div>
+
+        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+          <li class="ms-3"><a class="text-body-secondary" href="#">
+              <svg class="bi" width="24" height="24" fill="currentColor"><use
+                xlink:href="res/bootstrap-icons/bootstrap-icons.svg#github"></use></svg>
+              <!--<img src="res/bootstrap-icons/icons/github.svg" width="24" height="24" alt="github"/>-->
+            </a></li>
+          <!--<li class="ms-3"><a class="text-body-secondary" href="#">
+          <svg class="bi" width="24" height="24"><use xlink:href="#instagram"></use></svg>
+          </a></li>-->
+          <!--<li class="ms-3"><a class="text-body-secondary" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#facebook"></use></svg></a></li>-->
+        </ul>
+      </footer>
+    </div>
+    <script src="res/bootstrap/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>

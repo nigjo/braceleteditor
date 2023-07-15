@@ -18,7 +18,7 @@
   #pattern,#pattern svg{max-height: 85vh;}
 }
 
-nav ul li {
+/*nav ul li {
   display: inline-block;
 }
 nav ul li:after{
@@ -26,4 +26,4 @@ nav ul li:after{
 }
 nav ul li+li:before{
   content: ' · '
-}
+}*/
