@@ -26,7 +26,9 @@ function updatePattern(config) {
   sessionStorage.setItem('braceletedit.config', JSON.stringify(config, ' '));
 
   addSvg('pattern', view.createNormalPatternView, config);
-  addSvg('preview', view.createSmallView, config);
+  let scale = (sessionStorage.getItem('braceletedit.scale') || '4,5')
+          .split(',').map(Number);
+  addSvg('preview', cfg => view.createSmallView(cfg, scale[0], scale[1]), config);
 
   let bbLink = document.getElementById("braceletbook-link");
   if (config.meta && "braceletbook.com-id" in config.meta) {
@@ -66,7 +68,7 @@ function addSvg(parentId, generator, config) {
   patternDiv.style.maxWidth = '90vw';
   patternDiv.style.maxHeight = 'calc(90vw / ' + width + ' * ' + height + ')';
 
-  const patternShadow = patternDiv.attachShadow({mode: "open"});
+  const patternShadow = patternDiv.shadowRoot||patternDiv.attachShadow({mode: "open"});
   patternShadow.replaceChildren(patternView);
 }
 
@@ -191,3 +193,30 @@ window.handleActions = function (event) {
     console.debug('handleActions', t);
   }
 };
+
+
+(() => {
+  let current = undefined;
+  let storedScale = sessionStorage.getItem('braceletedit.scale') || "3,4";
+  const scalers = document.querySelectorAll("[data-be-scaler]");
+  const mapped = new Map([...scalers]
+          .map(e => [e.dataset.beScaler, e]));
+  if (mapped.has(storedScale)) {
+    current = mapped.get(storedScale);
+    current.classList.add('active');
+  }
+  for (var scaler of scalers) {
+    scaler.onclick = (evt) => {
+      let nextVal = evt.target.dataset.beScaler;
+      sessionStorage.setItem('braceletedit.scale', nextVal);
+
+      current.classList.remove("active");
+      current = evt.target;
+      current.classList.add("active");
+
+      let cfg = JSON.parse(sessionStorage.getItem('braceletedit.config'));
+      let scale = nextVal.split(",");
+      addSvg('preview', cfg => view.createSmallView(cfg, scale[0], scale[1]), cfg);
+    };
+  }
+})();

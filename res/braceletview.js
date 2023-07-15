@@ -310,12 +310,12 @@ export function createNormalPatternView(config) {
   return root;
 }
 
-export function createSmallView(config) {
+export function createSmallView(config, scaleX=3, scaleY=4) {
 
   const SV_RX = 5;
   //const SV_RY = SV_RX * 2 / 3;
 //  const SV_RY = SV_RX * 3 / 4;
-  const SV_RY = SV_RX * 4 / 3;
+  const SV_RY = SV_RX * scaleY / scaleX;
 //  const SV_RY = SV_RX;
 
   const SV_DELTA_X = 1.75 * SV_RX;
