@@ -1,6 +1,6 @@
 # Bracelet Editor
 
-![Sample Pattern View](res/favicon256.png)
+![Sample Pattern View](res/screenshot.jpg)
 
 This is an attempt to create an editor for friendship bracelets
 as the mayor sites for friendship bracelets already have.
