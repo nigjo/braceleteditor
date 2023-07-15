@@ -34,6 +34,13 @@ function updatePattern(config) {
   const patternShadow = patternDiv.attachShadow({ mode: "open" });
   patternShadow.replaceChildren(patternView);
 
+  let previewDiv = document.getElementById('preview');
+  let previewView = view.createSmallView(config);
+  const previewSvg = previewView.querySelector('svg');
+  previewDiv.style.width = previewSvg.width.baseVal.value + 'px';
+  previewDiv.style.height = previewSvg.height.baseVal.value + 'px';
+  const previewShadow = previewDiv.attachShadow({ mode: "open" });
+  previewShadow.replaceChildren(previewView);
 }
 
 function initKnownPatternList() {
