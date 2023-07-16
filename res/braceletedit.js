@@ -65,14 +65,14 @@ function addSvg(parentId, generator, config) {
   let width = patternSvg.width.baseVal.value;
   let height = patternSvg.height.baseVal.value;
 
-  patternSvg.style.maxWidth = '90vw';
-  patternSvg.style.maxHeight = 'calc(90vw / ' + width + ' * ' + height + ')';
+  patternSvg.style.maxWidth = 'calc(100vw - 2em)';
+  patternSvg.style.maxHeight = 'calc((100vw - 2em) / ' + width + ' * ' + height + ')';
 
   let patternDiv = document.getElementById(parentId);
   patternDiv.style.width = width + 'px';
   patternDiv.style.height = height + 'px';
-  patternDiv.style.maxWidth = '90vw';
-  patternDiv.style.maxHeight = 'calc(90vw / ' + width + ' * ' + height + ')';
+  patternDiv.style.maxWidth = 'calc(100vw - 2em)';
+  patternDiv.style.maxHeight = 'calc((100vw - 2em) / ' + width + ' * ' + height + ')';
 
   const patternShadow = patternDiv.shadowRoot || patternDiv.attachShadow({mode: "open"});
   patternShadow.replaceChildren(patternView);

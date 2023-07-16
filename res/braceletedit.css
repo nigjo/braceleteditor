@@ -9,9 +9,9 @@
 	grid-column-start: 1;
 	grid-column-end: 4;
 }
-.left{text-align: right;}
+.left{text-align:right;justify-self:left;overflow:hidden;}
 .center{text-align: center;}
-.right{text-align: left;}
+.right{text-align:left;justify-self:right;overflow:hidden;}
 
 @media print {
   .noprint,.actions{display:none;}
