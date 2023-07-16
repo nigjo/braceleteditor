@@ -1,5 +1,8 @@
-import * as view from "./braceletview.js"
-        console.group("INIT in");
+import * as view from "./braceletview.js";
+const LOGGER = 'EDITOR';
+
+console.group(LOGGER, "INIT in");
+
 function loadPattern(patternName) {
   return fetch('./pattern/'
           + patternName
@@ -23,7 +26,10 @@ function loadPattern(patternName) {
 }
 
 function updatePattern(config) {
-  sessionStorage.setItem('braceletedit.config', JSON.stringify(config, ' '));
+  let cfgJson = JSON.stringify(config,null, '  ')
+          .replaceAll(/\n\s+(\d)(\n\s+)?/gs,'$1');
+  sessionStorage.setItem('braceletedit.config', cfgJson);
+  document.getElementById("configecho").textContent = cfgJson;
 
   addSvg('pattern', view.createNormalPatternView, config);
   let scale = (sessionStorage.getItem('braceletedit.scale') || '4,5')
@@ -88,7 +94,7 @@ function addConfigToSvg(svg, config) {
   let metaConfigElement = document.createElementNS(NS_META, 'config');
   metaConfigElement.setAttribute("xmlns", NS_META);
   let contentText = JSON.stringify(config);
-  console.debug(contentText);
+  console.debug(LOGGER, contentText);
   let content = document.createTextNode(contentText);
   metaConfigElement.append(content);
 
@@ -130,7 +136,7 @@ function initKnownPatternList() {
 
 function initPage() {
   //console.debug(view);
-  console.debug("init page");
+  console.debug(LOGGER, "init page");
 
   var infile = 'demo';
   var q = new URLSearchParams(location.search);
@@ -143,13 +149,13 @@ function initPage() {
     initKnownPatternList(),
     loadPattern(infile)
   ]).then(_ => {
-    console.debug("config files loaded.");
+    console.debug(LOGGER, "config files loaded.");
     window.dispatchEvent(new CustomEvent('configLoaded'));
   });
 
   initScaleMenu();
 
-  console.debug("waiting for config files to load...");
+  console.debug(LOGGER, "waiting for config files to load...");
 }
 //initPage();
 //export default initPage;
@@ -169,7 +175,7 @@ window.handleActions = function (event) {
       {
         let atleft = t.name === 'addStringL';
         config.threads = atleft ? ('AA' + config.threads) : (config.threads + 'AA');
-        console.debug(t.name, atleft);
+        console.debug(LOGGER, t.name, atleft);
         for (let r of config.pattern) {
           r.splice(atleft ? 0 : r.length, 0, 1);
         }
@@ -181,7 +187,7 @@ window.handleActions = function (event) {
       {
         let atleft = t.name === 'remStringL';
         config.threads = atleft ? config.threads.substring(2) : config.threads.substring(0, config.threads.length - 2);
-        console.debug(t.name, atleft);
+        console.debug(LOGGER, t.name, atleft);
         for (let r of config.pattern) {
           r.splice(atleft ? 0 : r.length - 1, 1);
         }
@@ -189,14 +195,14 @@ window.handleActions = function (event) {
         break;
       }
       default:
-        console.debug('handleActions', t.name, t);
+        console.debug(LOGGER, 'handleActions', t.name, t);
     }
 
     if (changed) {
       updatePattern(config);
     }
   } else {
-    console.debug('handleActions', t);
+    console.debug(LOGGER, 'handleActions', t);
   }
 };
 
@@ -217,7 +223,7 @@ function initScaleMenu() {
       let nextVal = item.dataset.beScaler;
       let scale = nextVal.split(",");
       if (scale.length !== 2) {
-        console.warn("EDITOR", "invalid scale:", scale);
+        console.warn(LOGGER, "invalid scale:", scale);
         return;
       }
       sessionStorage.setItem('braceletedit.scale', nextVal);
@@ -233,7 +239,83 @@ function initScaleMenu() {
   }
 }
 
+function downloadItemContent(parent) {
+  //console.log(LOGGER, parent.dataset);
+  let filename = parent.dataset.downloadFile;
+  const dllink = document.createElement('a');
+  let content = parent.innerHTML;
+  if (parent.shadowRoot) {
+    content = parent.shadowRoot.innerHTML;
+  }
+
+  if (content.length === 0) {
+    console.warn(LOGGER, "no content for " + filename);
+    return;
+  }
+
+  dllink.style.display = 'none';
+  let mediatype = 'text/plain';
+  dllink.href = 'data:' + mediatype
+          + ';charset=utf-8,'
+          + encodeURIComponent(content);
+  dllink.setAttribute("download", filename);
+  document.body.append(dllink);
+  dllink.click();
+  setTimeout(() => dllink.remove(), 10);
+  return false;
+}
+
+function makeDownloadLinks() {
+  if (document.readyState === 'loading') {
+    console.debug(LOGGER, 'wait for content loaded');
+    document.addEventListener('DOMContentLoaded', makeDownloadLinks);
+    return;
+  }
+  console.debug(LOGGER, 'content loaded');
+  /*wn-item" href="#" data-download-file="patternedit.json">
+   <svg class="bi theme-icon-active" style="width:.9em;height:.9em" fill="currentColor">
+   <use xlink:href="res/bootstrap-icons/bootstrap-icons.svg#download"></use></svg>
+   Config</a></li>
+   */
+  let lastMenuItem = document.getElementById('downloadhead');
+  let dlItems = document.querySelectorAll('[data-download-file]');
+  for (var dlItem of dlItems) {
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.classList.add("dropdown-item");
+    a.href = "#";
+    a.onclick = ((element) => {
+      return (evt) => {
+        console.debug(LOGGER, element);
+        downloadItemContent(element);
+        return false;
+      };
+    })(dlItem);
+
+    const svg = document.createElementNS(view.SVGNS, 'svg');
+    svg.classList.add("bi");
+    svg.setAttribute('style', "width:.9em;height:.9em;fill:currentColor");
+
+    const use = document.createElementNS(view.SVGNS, 'use');
+    use.setAttribute("xlink:href", "res/bootstrap-icons/bootstrap-icons.svg#download");
+
+    svg.append(use);
+    a.innerHTML = svg.outerHTML;
+    let caption = dlItem.dataset.downloadCaption
+            //|| dlItem.id
+            || dlItem.dataset.downloadFile;
+    a.append(" " + caption);
+
+    li.append(a);
+
+    lastMenuItem.after(li);
+    lastMenuItem = li;
+  }
+}
+
 // execute on module load
 (() => {
   initPage();
+  makeDownloadLinks();
+  console.groupEnd();
 })();
