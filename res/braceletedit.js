@@ -68,7 +68,7 @@ function addSvg(parentId, generator, config) {
   patternDiv.style.maxWidth = '90vw';
   patternDiv.style.maxHeight = 'calc(90vw / ' + width + ' * ' + height + ')';
 
-  const patternShadow = patternDiv.shadowRoot||patternDiv.attachShadow({mode: "open"});
+  const patternShadow = patternDiv.shadowRoot || patternDiv.attachShadow({mode: "open"});
   patternShadow.replaceChildren(patternView);
 }
 
@@ -107,18 +107,21 @@ function initKnownPatternList() {
     const items = document.createDocumentFragment();
     for (let info of data.pattern) {
       const item = document.createElement('li');
-      item.classList.add("dropdown-item");
-      const link = document.createElement('a');
-      link.classList.add("nav-link");
       if (info.name !== window.currentPattern) {
+        const link = document.createElement('a');
+        link.classList.add("dropdown-item");
         let q = new URLSearchParams();
         q.set('pattern', info.name);
         link.href = '?' + q;
+        link.textContent = info.displayName || info.name;
+        item.append(link);
       } else {
-        link.classList.add("disabled");
+        const itemText = document.createElement('span');
+        itemText.textContent = info.displayName || info.name;
+        itemText.classList.add("dropdown-item");
+        itemText.classList.add("active");
+        item.append(itemText);
       }
-      link.textContent = info.displayName || info.name;
-      item.append(link);
       items.append(item);
     }
     navparent.replaceChildren(items);
@@ -143,9 +146,12 @@ function initPage() {
     console.debug("config files loaded.");
     window.dispatchEvent(new CustomEvent('configLoaded'));
   });
+
+  initScaleMenu();
+
   console.debug("waiting for config files to load...");
 }
-initPage();
+//initPage();
 //export default initPage;
 //console.groupEnd("INIT out");
 
@@ -195,28 +201,39 @@ window.handleActions = function (event) {
 };
 
 
-(() => {
+function initScaleMenu() {
   let current = undefined;
   let storedScale = sessionStorage.getItem('braceletedit.scale') || "3,4";
-  const scalers = document.querySelectorAll("[data-be-scaler]");
-  const mapped = new Map([...scalers]
+  const scalerItems = document.querySelectorAll("[data-be-scaler]");
+  const mapped = new Map([...scalerItems]
           .map(e => [e.dataset.beScaler, e]));
   if (mapped.has(storedScale)) {
     current = mapped.get(storedScale);
     current.classList.add('active');
   }
-  for (var scaler of scalers) {
-    scaler.onclick = (evt) => {
-      let nextVal = evt.target.dataset.beScaler;
+  for (var scaleItem of scalerItems) {
+    scaleItem.onclick = (evt) => {
+      let item = evt.target;
+      let nextVal = item.dataset.beScaler;
+      let scale = nextVal.split(",");
+      if (scale.length !== 2) {
+        console.warn("EDITOR", "invalid scale:", scale);
+        return;
+      }
       sessionStorage.setItem('braceletedit.scale', nextVal);
 
-      current.classList.remove("active");
-      current = evt.target;
+      if (current)
+        current.classList.remove("active");
+      current = item;
       current.classList.add("active");
 
       let cfg = JSON.parse(sessionStorage.getItem('braceletedit.config'));
-      let scale = nextVal.split(",");
       addSvg('preview', cfg => view.createSmallView(cfg, scale[0], scale[1]), cfg);
     };
   }
+}
+
+// execute on module load
+(() => {
+  initPage();
 })();

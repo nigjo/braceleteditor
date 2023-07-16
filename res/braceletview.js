@@ -310,7 +310,12 @@ export function createNormalPatternView(config) {
   return root;
 }
 
-export function createSmallView(config, scaleX=3, scaleY=4) {
+export function createSmallView(config, scaleX = 3, scaleY = 4) {
+
+  if (!scaleX || scaleX === 0 || !scaleY || scaleY === 0) {
+    console.error(LOGGER, "invalid scaling factor", scaleX, scaleY);
+    return null;
+  }
 
   const SV_RX = 5;
   //const SV_RY = SV_RX * 2 / 3;
