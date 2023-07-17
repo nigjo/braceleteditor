@@ -259,20 +259,10 @@ export function createNormalPatternView(config) {
   let rowCount = pattern.length;
   //console.debug(LOGGER, threadCount, 'x', rowCount);
 
-  const root = new DocumentFragment();
-  let svg = document.createElementNS(SVGNS, "svg");
-  svg.setAttribute('xmlns', "http://www.w3.org/2000/svg");
-  svg.setAttribute('version', "1.0");
 
   let width = Math.floor(threadCount * deltaX) + 2 * 20;
   let height = Math.floor((rowCount + 1) * deltaY + 16);
-
-  svg.setAttribute("width", width);
-  svg.setAttribute("height", height);
-
-  svg.setAttribute("viewBox",
-          [0, 0, width, height].join(' '));
-  svg.setAttribute("preserveAspectRatio", "xMinYMin meet");
+  const svg = createSvgSceleton(width, height, config);
 
   let defs = document.createElementNS(SVGNS, "defs");
   let arrows = createArrows();
@@ -305,10 +295,29 @@ export function createNormalPatternView(config) {
   copy.setAttribute('y', height - 16);
   svg.append(copy);
 
+  const root = new DocumentFragment();
   root.append(svg);
 //  console.debug(LOGGER, svg);
   return root;
 }
+
+function createSvgSceleton(width, height, config) {
+  let svg = document.createElementNS(SVGNS, "svg");
+  svg.setAttribute('xmlns', "http://www.w3.org/2000/svg");
+  svg.setAttribute('version', "1.0");
+  addMetadataToSvg(svg, config);
+
+  svg.setAttribute("width", width);
+  svg.setAttribute("height", height);
+
+  svg.setAttribute("viewBox",
+          [0, 0, width, height].join(' '));
+  svg.setAttribute("preserveAspectRatio", "xMinYMin meet");
+
+  return svg;
+}
+
+let _counter = 1;
 
 export function createSmallView(config, scaleX = 3, scaleY = 4) {
 
@@ -394,20 +403,9 @@ export function createSmallView(config, scaleX = 3, scaleY = 4) {
   //console.debug(LOGGER, threadCount, 'x', rowCount);
   let maxrows = Math.max(SV_MAX_LENGTH, Math.floor(rowCount * 1.5));
 
-  const root = new DocumentFragment();
-  let svg = document.createElementNS(SVGNS, "svg");
-  svg.setAttribute('xmlns', "http://www.w3.org/2000/svg");
-  svg.setAttribute('version', "1.0");
-
   let width = Math.floor((maxrows + 1) * SV_DELTA_X);
   let height = Math.floor((threadCount + 1) * SV_DELTA_Y + 24);
-
-  svg.setAttribute("width", width);
-  svg.setAttribute("height", height);
-
-  svg.setAttribute("viewBox",
-          [0, 0, width, height].join(' '));
-  svg.setAttribute("preserveAspectRatio", "xMinYMin meet");
+  const svg = createSvgSceleton(width, height, config);
 
   let defs = document.createElementNS(SVGNS, "defs");
   //let arrows = createArrows();
@@ -447,6 +445,7 @@ export function createSmallView(config, scaleX = 3, scaleY = 4) {
   copy.setAttribute('y', height - 8);
   svg.append(copy);
 
+  const root = new DocumentFragment();
   root.append(svg);
 //  console.debug(LOGGER, svg);
   return root;
@@ -506,6 +505,45 @@ function createStyles(colors, radius) {
   return style;
 }
 
+/**
+ * @param {SVGSVGElement} svg
+ * @param {Object} config
+ * @returns {undefined}
+ */
+function addMetadataToSvg(svg, config) {
+  let meta = svg.querySelector("metadata");
+  if (!meta) {
+    meta = document.createElementNS(svg.namespaceURI, 'metadata');
+    svg.insertAdjacentElement("afterbegin", meta);
+    meta = svg.querySelector("metadata");
+  }
 
+  const NS_META = 'urn:de.nigjo:braceletview:config';
+  meta.setAttribute('xmlns:bv', NS_META);
+
+  let bvCreator = document.createElementNS(NS_META, 'bv:generator');
+  bvCreator.textContent = 'BraceletViewer v0.1';
+  meta.append(bvCreator);
+
+  let bvCreated = document.createElementNS(NS_META, 'bv:created');
+  if (config.meta && "created" in config.meta) {
+    bvCreated.textContent = config.meta.created;
+  } else {
+    bvCreated.textContent = new Date().toISOString();
+  }
+  meta.append(bvCreated);
+
+  if (config.meta) {
+    for (let key of Object.keys(config.meta)) {
+      let old =
+              meta.querySelector('bv\\:' + key) || meta.querySelector(key);
+      if (!old) {
+        let bvProperty = document.createElementNS(NS_META, 'bv:' + key);
+        bvProperty.textContent = config.meta[key];
+        meta.append(bvProperty);
+      }
+    }
+  }
+}
 
 //export {createSmallView,createNormalPatternView};

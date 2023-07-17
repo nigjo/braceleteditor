@@ -26,8 +26,8 @@ function loadPattern(patternName) {
 }
 
 function updatePattern(config) {
-  let cfgJson = JSON.stringify(config,null, '  ')
-          .replaceAll(/\n\s+(\d)(\n\s+)?/gs,'$1');
+  let cfgJson = JSON.stringify(config, null, '  ')
+          .replaceAll(/\n\s+(\d)(\n\s+)?/gs, '$1');
   sessionStorage.setItem('braceletedit.config', cfgJson);
   document.getElementById("configecho").textContent = cfgJson;
 
@@ -61,7 +61,6 @@ function addSvg(parentId, generator, config) {
   let patternView = generator(config);
 
   const patternSvg = patternView.querySelector('svg');
-  addConfigToSvg(patternSvg, config);
   let width = patternSvg.width.baseVal.value;
   let height = patternSvg.height.baseVal.value;
 
@@ -76,29 +75,6 @@ function addSvg(parentId, generator, config) {
 
   const patternShadow = patternDiv.shadowRoot || patternDiv.attachShadow({mode: "open"});
   patternShadow.replaceChildren(patternView);
-}
-
-function addConfigToSvg(svg, config) {
-  let meta = svg.querySelector("defs metadata");
-  if (!meta) {
-    let defs = svg.querySelector("defs");
-    if (!defs) {
-      defs = document.createElementNS(svg.namespaceURI, 'defs');
-      svg.insertAdjacentElement("afterbegin", defs);
-    }
-    meta = document.createElementNS(svg.namespaceURI, 'metadata');
-    defs.append(meta);
-  }
-
-  const NS_META = 'urn:de.nigjo:threadedit:config';
-  let metaConfigElement = document.createElementNS(NS_META, 'config');
-  metaConfigElement.setAttribute("xmlns", NS_META);
-  let contentText = JSON.stringify(config);
-  console.debug(LOGGER, contentText);
-  let content = document.createTextNode(contentText);
-  metaConfigElement.append(content);
-
-  meta.append(metaConfigElement);
 }
 
 function initKnownPatternList() {
