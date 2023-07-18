@@ -26,6 +26,10 @@
       "displayName":"Ruby Necklace"
     },
     {
+      "name":"paws",
+      "displayName":"paws"
+    },
+    {
       "name":"pinwheel-left",
       "displayName":"Pinwheel (counter clockwise)"
     },
@@ -36,6 +40,10 @@
     {
       "name":"rainbow",
       "displayName":"Rainbow"
+    },
+    {
+      "name":"snake",
+      "displayName":"snake"
     }
   ]
 }
