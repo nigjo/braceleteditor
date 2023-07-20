@@ -26,15 +26,26 @@ function loadPattern(patternName) {
 }
 
 function updatePattern(config) {
+  console.group(LOGGER, "updatePattern");
+  document.dispatchEvent(
+          new CustomEvent('be.configChanged', {detail: {config: config}}));
+  console.groupEnd();
+}
+
+// update storage and "configecho"
+document.addEventListener('be.configChanged', updateStorage);
+function updateStorage(evt) {
+  const config = evt.detail.config;
   let cfgJson = JSON.stringify(config, null, '  ')
           .replaceAll(/\n\s+(\d)(\n\s+)?/gs, '$1');
   sessionStorage.setItem('braceletedit.config', cfgJson);
   document.getElementById("configecho").textContent = cfgJson;
+}
 
-  addSvg('pattern', view.createNormalPatternView, config);
-  let scale = (sessionStorage.getItem('braceletedit.scale') || '4,5')
-          .split(',').map(Number);
-  addSvg('preview', cfg => view.createSmallView(cfg, scale[0], scale[1]), config);
+// update braceletbook.com link
+document.addEventListener('be.configChanged', updateExternalLink);
+function updateExternalLink(evt) {
+  const config = evt.detail.config;
 
   let bbLink = document.getElementById("braceletbook-link");
   if (config.meta && "braceletbook.com-id" in config.meta) {
@@ -54,6 +65,17 @@ function updatePattern(config) {
     bbLink.href = "https://www.braceletbook.com/";
     bbLink.title = bbLink.dataset.title;
   }
+}
+
+// create SVG Images
+document.addEventListener('be.configChanged', updatePatternAndPreview);
+function updatePatternAndPreview(evt) {
+  const config = evt.detail.config;
+
+  addSvg('pattern', view.createNormalPatternView, config);
+  let scale = (sessionStorage.getItem('braceletedit.scale') || '4,5')
+          .split(',').map(Number);
+  addSvg('preview', cfg => view.createSmallView(cfg, scale[0], scale[1]), config);
 }
 
 function addSvg(parentId, generator, config) {
@@ -126,7 +148,7 @@ function initPage() {
     loadPattern(infile)
   ]).then(_ => {
     console.debug(LOGGER, "config files loaded.");
-    document.dispatchEvent(new CustomEvent('configLoaded'));
+    document.dispatchEvent(new CustomEvent('be.configLoaded'));
   });
 
   initScaleMenu();
@@ -346,19 +368,69 @@ function storeAsPng(svgid, filenamebase) {
 }
 
 class RawEditor {
-  constructor(){
-    document.addEventListener("configLoaded", this.updateEditor);
+  constructor() {
+    document.addEventListener("be.configChanged", this.updateEditor);
+    document.forms.raweditor.onsubmit = () => {
+      console.log(LOGGER, "update current view");
+
+      let config = {
+        _version: 1,
+        _format: 'braceletview',
+        meta: {
+          modified: new Date().toISOString()
+        }
+      };
+      if ("meta" in window.currentConfig) {
+        for (let key of Object.keys(window.currentConfig.meta)) {
+          if (!(key in config.meta)) {
+            config.meta[key] = window.currentConfig.meta[key];
+          }
+        }
+      }
+      config.colors = [];
+      for (let colorDef of document.getElementById("rawedit-colors")
+              .querySelectorAll('input')) {
+        config.colors.push(colorDef.value);
+      }
+
+      config.threads = document.forms.raweditor.threads.value.toUpperCase();
+      config.pattern = window.currentConfig.pattern; //TODO: get from form
+      
+      //console.debug(LOGGER, config);
+      window.currentConfig = config;
+      updatePattern(config);
+
+      return false;
+    };
   }
-  
-  updateEditor(){
+
+  createNewConfig() {
+  }
+
+  updateEditor() {
     console.group(LOGGER, "RawEditor", "update");
     let config = window.currentConfig;
-    console.debug(LOGGER, "RawEditor",document.forms.raweditor);
+    console.debug(LOGGER, "RawEditor", document.forms.raweditor);
 
     document.forms.raweditor.threads.value = config.threads;
-    
+
+    const colorRow = new DocumentFragment();
     //farben
-    
+    let colorIdx = 0;
+    const rowTpl = document.getElementById("rawedit-color-row");
+    for (const color of config.colors) {
+      let colorName = String.fromCharCode('A'.charCodeAt(0) + colorIdx);
+      let row = rowTpl.content.cloneNode(true);
+      let picker = row.querySelector('input');
+      picker.setAttribute("name", "thread-" + colorName);
+      picker.setAttribute("title", "Faden " + colorName);
+      picker.setAttribute("value", color);
+
+      colorRow.append(row);
+      ++colorIdx;
+    }
+
+    document.getElementById("rawedit-colors").replaceChildren(colorRow);
     console.groupEnd();
   }
 }
