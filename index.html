@@ -118,6 +118,33 @@
             <li>Export für braceletbook.com und friendship-bracelets.net</li>
           </ul>
         </div>
+      </div><div id="rawedit">
+        <form id="raweditor" name="raweditor" class="container collapse show">
+          <div id="rawedit-meta"></div>
+          <div class="row row-cols-auto">
+            <p class="col-2 form-label">Farben</p>
+            <div class="px-2 col-10">
+              <div class="row row-cols-auto" id="rawedit-colors">
+              </div>
+            </div>
+            <template id="rawedit-color-row">
+              <div class="col">
+                <input class="form-control form-control-color" type="color"
+                       name="thread-?" title="Faden ?" value="#80FF00">
+              </div>
+            </template>
+          </div>
+          <div class="row row-cols-auto">
+            <div class="col-2">
+              <label class="form-label" for="rawedit-threads">Fäden</label>
+            </div><div class="col-10 px-2">
+              <input class="form-control" id="rawedit-threads" size="20"
+                     placeholder="initial threads"
+                     name="threads"/>
+            </div>
+          </div>
+          <div id="rawedit-pattern"></div>
+        </form>
       </div><div id="settings">
       </div><div class="container d-flex align-items-center flex-column">
         <div id="preview" data-download-file="preview.svg" data-download-caption="Vorschau"></div>
@@ -139,7 +166,8 @@
           </div>
           <!-- PATTERN START -->
           <div class="left"></div>
-          <div id="pattern" onclick="handleActions(event);" data-download-file="pattern.svg" data-download-caption="Pattern"></div>
+          <div id="pattern" onclick="handleActions(event);"
+               data-download-file="pattern.svg" data-download-caption="Pattern">Bitte warten...</div>
           <div class="right"></div>
           <!-- PATTERN END -->
           <div class="left"></div>

@@ -126,7 +126,7 @@ function initPage() {
     loadPattern(infile)
   ]).then(_ => {
     console.debug(LOGGER, "config files loaded.");
-    window.dispatchEvent(new CustomEvent('configLoaded'));
+    document.dispatchEvent(new CustomEvent('configLoaded'));
   });
 
   initScaleMenu();
@@ -345,8 +345,27 @@ function storeAsPng(svgid, filenamebase) {
   img.src = url;
 }
 
+class RawEditor {
+  constructor(){
+    document.addEventListener("configLoaded", this.updateEditor);
+  }
+  
+  updateEditor(){
+    console.group(LOGGER, "RawEditor", "update");
+    let config = window.currentConfig;
+    console.debug(LOGGER, "RawEditor",document.forms.raweditor);
+
+    document.forms.raweditor.threads.value = config.threads;
+    
+    //farben
+    
+    console.groupEnd();
+  }
+}
+
 // execute on module load
 (() => {
+  new RawEditor();
   initPage();
   makeDownloadLinks();
   console.groupEnd();
