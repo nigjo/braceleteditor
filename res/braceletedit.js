@@ -253,6 +253,16 @@ function makeDownloadLinks() {
    <use xlink:href="res/bootstrap-icons/bootstrap-icons.svg#download"></use></svg>
    Config</a></li>
    */
+  function createDLIcon() {
+    const svg = document.createElementNS(view.SVGNS, 'svg');
+    svg.classList.add("bi");
+    svg.setAttribute('style', "width:.9em;height:.9em;fill:currentColor");
+    const use = document.createElementNS(view.SVGNS, 'use');
+    use.setAttribute("xlink:href", "res/bootstrap-icons/bootstrap-icons.svg#download");
+    svg.append(use);
+    return svg;
+  }
+
   let lastMenuItem = document.getElementById('downloadhead');
   let dlItems = document.querySelectorAll('[data-download-file]');
   for (var dlItem of dlItems) {
@@ -268,15 +278,7 @@ function makeDownloadLinks() {
       };
     })(dlItem);
 
-    const svg = document.createElementNS(view.SVGNS, 'svg');
-    svg.classList.add("bi");
-    svg.setAttribute('style', "width:.9em;height:.9em;fill:currentColor");
-
-    const use = document.createElementNS(view.SVGNS, 'use');
-    use.setAttribute("xlink:href", "res/bootstrap-icons/bootstrap-icons.svg#download");
-
-    svg.append(use);
-    a.innerHTML = svg.outerHTML;
+    a.innerHTML = createDLIcon().outerHTML;
     let caption = dlItem.dataset.downloadCaption
             //|| dlItem.id
             || dlItem.dataset.downloadFile;
@@ -286,7 +288,57 @@ function makeDownloadLinks() {
 
     lastMenuItem.after(li);
     lastMenuItem = li;
+
+    if (dlItem.dataset.downloadFile.endsWith(".svg") && dlItem.id) {
+      const pngLi = document.createElement('li');
+      const pngLink = document.createElement('a');
+      pngLink.classList.add("dropdown-item");
+      pngLink.innerHTML = createDLIcon().outerHTML;
+      pngLink.append(" " + caption + " (PNG)");
+      pngLink.onclick = ((element) =>
+        () => storeAsPng(element.id, element.dataset.downloadFile)
+      )(dlItem);
+
+      pngLi.append(pngLink);
+      lastMenuItem.after(pngLi);
+      lastMenuItem = pngLi;
+    }
+
   }
+}
+
+function storeAsPng(svgid, filenamebase) {
+  console.debug(LOGGER, svgid, filenamebase);
+  console.debug(LOGGER, document.getElementById(svgid));
+  console.debug(LOGGER, document.getElementById(svgid)
+          .querySelector('svg'));
+  
+  const parent = document.getElementById(svgid);
+  var svg = (parent.shadowRoot?parent.shadowRoot:parent)
+          .querySelector('svg');
+  const canvas = document.createElement('canvas');
+
+  //Source: https://mybyways.com/blog/convert-svg-to-png-using-your-browser
+  var img = new Image();
+  var blob = new Blob([svg.outerHTML], {type: 'image/svg+xml'});
+  var url = URL.createObjectURL(blob);
+  img.onload = function () {
+    const scale = window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
+    canvas.width = svg.width.baseVal.value;
+    canvas.height = svg.height.baseVal.value;
+    canvas.getContext('2d').drawImage(img, 0, 0);
+    URL.revokeObjectURL(url);
+    var uri = canvas.toDataURL('image/png').replace('image/png', 'octet/stream');
+    var a = document.createElement('a');
+    document.body.appendChild(a);
+    a.style = 'display: none';
+    a.href = uri;
+    a.download = filenamebase + '.png';
+    a.click();
+    window.URL.revokeObjectURL(uri);
+    document.body.removeChild(a);
+  };
+  img.src = url;
 }
 
 // execute on module load
