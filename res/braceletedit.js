@@ -217,7 +217,8 @@ function initScaleMenu() {
 
 function downloadItemContent(parent) {
   //console.log(LOGGER, parent.dataset);
-  let filename = parent.dataset.downloadFile;
+  let filename = "braceletedit-" + window.currentPattern
+          + "-" + parent.dataset.downloadFile;
   const dllink = document.createElement('a');
   let content = parent.innerHTML;
   if (parent.shadowRoot) {
@@ -295,9 +296,12 @@ function makeDownloadLinks() {
       pngLink.classList.add("dropdown-item");
       pngLink.innerHTML = createDLIcon().outerHTML;
       pngLink.append(" " + caption + " (PNG)");
-      pngLink.onclick = ((element) =>
-        () => storeAsPng(element.id, element.dataset.downloadFile)
-      )(dlItem);
+      pngLink.onclick = ((element) => {
+        let orgname = element.dataset.downloadFile;
+        let filename = "braceletedit-" + window.currentPattern
+                + "-" + orgname.substring(0, orgname.lastIndexOf('.'));
+        return () => storeAsPng(element.id, filename);
+      })(dlItem);
 
       pngLi.append(pngLink);
       lastMenuItem.after(pngLi);
@@ -312,9 +316,9 @@ function storeAsPng(svgid, filenamebase) {
   console.debug(LOGGER, document.getElementById(svgid));
   console.debug(LOGGER, document.getElementById(svgid)
           .querySelector('svg'));
-  
+
   const parent = document.getElementById(svgid);
-  var svg = (parent.shadowRoot?parent.shadowRoot:parent)
+  var svg = (parent.shadowRoot ? parent.shadowRoot : parent)
           .querySelector('svg');
   const canvas = document.createElement('canvas');
 
