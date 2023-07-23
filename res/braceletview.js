@@ -313,7 +313,7 @@ export function createNormalPatternView(config) {
   overflow.setAttribute('transform', 'translate('+ borderX+','+(y+textheight*1.5)+')');
   svg.append(overflow);
 
-  const copy = _mkText('© 2023 braceletview by nigjo',4, height - textheight);
+  const copy = _mkText('© 2023 braceletview by nigjo',4, height - textheight/2);
   copy.setAttribute('class', 'hint');
   svg.append(copy);
 
