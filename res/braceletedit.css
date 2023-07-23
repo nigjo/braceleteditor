@@ -15,7 +15,9 @@
 
 @media print {
   .noprint,.actions{display:none;}
-  #pattern,#pattern svg{max-height: 85vh;}
+  #pattern{max-height: 90vh !important;}
+  
+  #preview{max-height:10vh !important;}
 }
 
 /*nav ul li {
