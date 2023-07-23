@@ -1,12 +1,14 @@
 const SVGNS = "http://www.w3.org/2000/svg";
 const LOGGER = "VIEW";
 
+const textheight = 16;
 
 /**
  * @param config Object mit allen Einstellungen
  */
 export function createNormalPatternView(config) {
   const radius = 30;
+  const borderX = 20;
   const deltaX = Math.floor(radius * 4);
   const deltaY = Math.floor(radius * 2);
 
@@ -260,8 +262,8 @@ export function createNormalPatternView(config) {
   //console.debug(LOGGER, threadCount, 'x', rowCount);
 
 
-  let width = Math.floor(threadCount * deltaX) + 2 * 20;
-  let height = Math.floor((rowCount + 1) * deltaY + 16);
+  let width = Math.floor(threadCount * deltaX) + 2 * borderX;
+  let height = Math.floor((rowCount + 1) * deltaY + 3*textheight);
   const svg = createSvgSceleton(width, height, config);
 
   let defs = document.createElementNS(SVGNS, "defs");
@@ -272,6 +274,7 @@ export function createNormalPatternView(config) {
   svg.append(defs);
 
   let rowgroup = document.createElementNS(SVGNS, "g");
+  rowgroup.setAttribute('transform', 'translate(0,'+textheight+')');
   svg.append(rowgroup);
 
   let current = threads;
@@ -281,18 +284,37 @@ export function createNormalPatternView(config) {
   for (let r of pattern) {
     rowgroup.append(document.createComment(current.join('')));
     let row = addRow(rownum++, r, r.length === threadCount, current);
-    row.setAttribute('transform', 'translate(' + 20 + ',' + y + ')');
+    row.setAttribute('transform', 'translate(' + borderX + ',' + y + ')');
     rowgroup.append(row);
 
     y += deltaY;
   }
   rowgroup.append(document.createComment(current.join('')));
+  
+  function _mkText(text, x,y){
+    const element = document.createElementNS(SVGNS, "text");
+    element.textContent = text;
+    element.setAttribute('x', x);
+    element.setAttribute('y', y);
+    return element;
+  }
 
-  const copy = document.createElementNS(SVGNS, "text");
-  copy.textContent = '© 2023 braceletview by nigjo';
+  let overflow = document.createElementNS(SVGNS, 'g');
+  overflow.setAttribute('transform', 'translate('+ borderX+',0)');
+  overflow.setAttribute('class', 'overflow');
+  let acode = Number(0x24d0);
+  let idx=0;
+  for(let idx=0;idx<threadCount;idx++){
+    let OA = _mkText(String.fromCodePoint(acode+idx),hx+deltaX*idx,textheight*1.5);
+    overflow.append(OA);
+  }
+  svg.append(overflow);
+  overflow = overflow.cloneNode(true);
+  overflow.setAttribute('transform', 'translate('+ borderX+','+(y+textheight*1.5)+')');
+  svg.append(overflow);
+
+  const copy = _mkText('© 2023 braceletview by nigjo',4, height - textheight/2);
   copy.setAttribute('class', 'hint');
-  copy.setAttribute('x', 4);
-  copy.setAttribute('y', height - 16);
   svg.append(copy);
 
   const root = new DocumentFragment();
@@ -457,7 +479,7 @@ function createStyles(colors, radius) {
   let rules = {
     'text': {
       'font-family': 'sans-serif',
-      'font-size': '16px'
+      'font-size': textheight+'px'
     },
     'text.hint': {
       'fill': 'lightgray'
@@ -481,6 +503,11 @@ function createStyles(colors, radius) {
       'fill': 'none',
       'stroke': 'gray',
       'stroke-width': radius / 12
+    },
+    '.overflow text':{
+      'font-size': Math.floor(textheight*1.5)+'px',
+      'fill': 'gray',
+      'text-anchor': 'middle'
     }
   };
 
