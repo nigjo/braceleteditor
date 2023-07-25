@@ -86,8 +86,8 @@ function addSvg(parentId, generator, config) {
   let width = patternSvg.width.baseVal.value;
   let height = patternSvg.height.baseVal.value;
 
-  patternSvg.style.maxWidth = 'calc(100vw - 2em)';
-  patternSvg.style.maxHeight = 'calc((100vw - 2em) / ' + width + ' * ' + height + ')';
+  patternSvg.style.maxWidth = 'inherit';
+  patternSvg.style.maxHeight = 'inherit';
 
   let patternDiv = document.getElementById(parentId);
   patternDiv.style.width = width + 'px';
