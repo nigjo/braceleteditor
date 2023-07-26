@@ -56,6 +56,7 @@ export function createNormalPatternView(config) {
     let lastrow = threads;
     for (let k of row) {
       let knotGroup = document.createElementNS(SVGNS, "g");
+      knotGroup.setAttribute('class', 'knot');
       knotGroup.setAttribute('transform',
               'translate('
               + ((index + .5) * deltaX - x)
