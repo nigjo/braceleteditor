@@ -160,19 +160,20 @@ function initLoadedPage(){
   console.group(LOGGER, 'content loaded');
   makeDownloadLinks();
   initScaleMenu();
-  initPatternActions();
+  initEditorActions();
   console.groupEnd();
 }
 
 //initPage();
 //export default initPage;
 //console.groupEnd("INIT out");
-function initPatternActions(){
+function initEditorActions(){
   const buttons = document.querySelectorAll('#editor input[type=button]');
   for(let btn of buttons){
     btn.onclick = e=>handleActions(e);
   }
   console.debug(LOGGER, buttons.length, "buttons");
+  document.forms.raweditor.addColor.onclick = e=>handleActions(e);
 }
 
 
@@ -235,6 +236,22 @@ function handleActions(event) {
         config.pattern.pop();
         config.pattern.pop();
         changed = true;
+        break;
+      }
+      case 'addColor':
+      {
+        const color = '#FF0000';
+        config.colors.push(color);
+        let colorName = String.fromCharCode(
+            'A'.charCodeAt(0) + config.colors.length - 1);
+        const rowTpl = document.getElementById("rawedit-color-row");
+        let row = rowTpl.content.cloneNode(true);
+        let picker = row.querySelector('input');
+        picker.setAttribute("name", "thread-" + colorName);
+        picker.setAttribute("title", "Faden " + colorName);
+        picker.setAttribute("value", color);
+
+        document.getElementById("rawedit-colors").append(row);
         break;
       }
       default:
@@ -468,8 +485,8 @@ class RawEditor {
       colorRow.append(row);
       ++colorIdx;
     }
-
     document.getElementById("rawedit-colors").replaceChildren(colorRow);
+
     let svg=document.getElementById("pattern").shadowRoot.querySelector('svg');
     console.debug(LOGGER,1,this);
     svg.onclick = e => this.toggleKnot(e);
