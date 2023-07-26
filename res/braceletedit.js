@@ -71,11 +71,13 @@ function updateExternalLink(evt) {
 document.addEventListener('be.configChanged', updatePatternAndPreview);
 function updatePatternAndPreview(evt) {
   const config = evt.detail.config;
+  console.group(LOGGER,'new svgs');
 
   addSvg('pattern', view.createNormalPatternView, config);
   let scale = (sessionStorage.getItem('braceletedit.scale') || '4,5')
           .split(',').map(Number);
   addSvg('preview', cfg => view.createSmallView(cfg, scale[0], scale[1]), config);
+  console.groupEnd();
 }
 
 function addSvg(parentId, generator, config) {
@@ -151,16 +153,30 @@ function initPage() {
     document.dispatchEvent(new CustomEvent('be.configLoaded'));
   });
 
-  initScaleMenu();
-
   console.debug(LOGGER, "waiting for config files to load...");
 }
+
+function initLoadedPage(){
+  console.group(LOGGER, 'content loaded');
+  makeDownloadLinks();
+  initScaleMenu();
+  initPatternActions();
+  console.groupEnd();
+}
+
 //initPage();
 //export default initPage;
 //console.groupEnd("INIT out");
+function initPatternActions(){
+  const buttons = document.querySelectorAll('#editor input[type=button]');
+  for(let btn of buttons){
+    btn.onclick = e=>handleActions(e);
+  }
+  console.debug(LOGGER, buttons.length, "buttons");
+}
 
 
-window.handleActions = function (event) {
+function handleActions(event) {
   const t = event.target;
   event.stopPropagation();
 
@@ -265,12 +281,6 @@ function downloadItemContent(parent) {
 }
 
 function makeDownloadLinks() {
-  if (document.readyState === 'loading') {
-    console.debug(LOGGER, 'wait for content loaded');
-    document.addEventListener('DOMContentLoaded', makeDownloadLinks);
-    return;
-  }
-  console.debug(LOGGER, 'content loaded');
   /*wn-item" href="#" data-download-file="patternedit.json">
    <svg class="bi theme-icon-active" style="width:.9em;height:.9em" fill="currentColor">
    <use xlink:href="res/bootstrap-icons/bootstrap-icons.svg#download"></use></svg>
@@ -369,7 +379,7 @@ function storeAsPng(svgid, filenamebase) {
 
 class RawEditor {
   constructor() {
-    document.addEventListener("be.configChanged", this.updateEditor);
+    document.addEventListener("be.configChanged", ()=>this.updateEditor());
     document.forms.raweditor.onsubmit = () => {
       console.log(LOGGER, "update current view");
 
@@ -395,7 +405,7 @@ class RawEditor {
 
       config.threads = document.forms.raweditor.threads.value.toUpperCase();
       config.pattern = window.currentConfig.pattern; //TODO: get from form
-      
+
       //console.debug(LOGGER, config);
       window.currentConfig = config;
       updatePattern(config);
@@ -431,7 +441,33 @@ class RawEditor {
     }
 
     document.getElementById("rawedit-colors").replaceChildren(colorRow);
+    let svg=document.getElementById("pattern").shadowRoot.querySelector('svg');
+    console.debug(LOGGER,1,this);
+    svg.onclick = e => this.toggleKnot(e);
+    console.debug(2);
+
     console.groupEnd();
+  }
+
+  toggleKnot(event) {
+    let knot = event.target.closest('.knot');
+    if(knot) {
+      let row = knot.parentNode;
+      let kidx = -1; //first sibling is rowmark
+      while(knot=knot.previousElementSibling)
+        ++kidx;
+      let ridx = 0;
+      while(row=row.previousElementSibling)
+        ++ridx;
+      //console.debug('knot', kidx, ridx);
+
+      let config = window.currentConfig;
+      config.pattern[ridx][kidx] = (config.pattern[ridx][kidx]+1)%5;
+      if(config.pattern[ridx][kidx]==0)
+        config.pattern[ridx][kidx] = 1;
+
+      updatePattern(config);
+    }
   }
 }
 
@@ -439,6 +475,11 @@ class RawEditor {
 (() => {
   new RawEditor();
   initPage();
-  makeDownloadLinks();
-  console.groupEnd();
+  if (document.readyState === 'loading') {
+    console.debug(LOGGER, 'wait for content loaded');
+    document.addEventListener('DOMContentLoaded', initLoadedPage);
+  }else{
+    initLoadedPage();
+  }
+  console.groupEnd(); // "init IN";
 })();
