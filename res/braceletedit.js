@@ -208,6 +208,35 @@ function handleActions(event) {
         changed = true;
         break;
       }
+      case 'addRowT':
+      {
+        config.pattern.unshift([...config.pattern[1]]);//copy of old 2nd row
+        config.pattern.unshift([...config.pattern[1]]);//copy of old 1nd row
+        changed = true;
+        break;
+      }
+      case 'addRowB':
+      {
+        const EoP = config.pattern.length;
+        config.pattern.push([...config.pattern[EoP-2]]);
+        config.pattern.push([...config.pattern[EoP-1]]);
+        changed = true;
+        break;
+      }
+      case 'remRowT':
+      {
+        config.pattern.shift();
+        config.pattern.shift();
+        changed = true;
+        break;
+      }
+      case 'remRowB':
+      {
+        config.pattern.pop();
+        config.pattern.pop();
+        changed = true;
+        break;
+      }
       default:
         console.debug(LOGGER, 'handleActions', t.name, t);
     }
