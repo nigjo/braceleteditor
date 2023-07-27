@@ -207,7 +207,7 @@ function loadExtension(detail) {
   extDiv.classList.add('collapse');
   extDiv.dataset.bsParent = '#extensions';
 
-  console.debug(LOGGER, typeof(detail.pageContent));
+  console.debug(LOGGER, typeof (detail.pageContent));
   if (detail.selector) {
     console.debug(LOGGER, detail.selector);
     //const frag = document.createDocumentFragment();
