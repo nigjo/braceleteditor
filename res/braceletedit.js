@@ -26,15 +26,26 @@ function loadPattern(patternName) {
 }
 
 function updatePattern(config) {
+  console.group(LOGGER, "updatePattern");
+  document.dispatchEvent(
+          new CustomEvent('be.configChanged', {detail: {config: config}}));
+  console.groupEnd();
+}
+
+// update storage and "configecho"
+document.addEventListener('be.configChanged', updateStorage);
+function updateStorage(evt) {
+  const config = evt.detail.config;
   let cfgJson = JSON.stringify(config, null, '  ')
           .replaceAll(/\n\s+(\d)(\n\s+)?/gs, '$1');
   sessionStorage.setItem('braceletedit.config', cfgJson);
   document.getElementById("configecho").textContent = cfgJson;
+}
 
-  addSvg('pattern', view.createNormalPatternView, config);
-  let scale = (sessionStorage.getItem('braceletedit.scale') || '4,5')
-          .split(',').map(Number);
-  addSvg('preview', cfg => view.createSmallView(cfg, scale[0], scale[1]), config);
+// update braceletbook.com link
+document.addEventListener('be.configChanged', updateExternalLink);
+function updateExternalLink(evt) {
+  const config = evt.detail.config;
 
   let bbLink = document.getElementById("braceletbook-link");
   if (config.meta && "braceletbook.com-id" in config.meta) {
@@ -54,6 +65,19 @@ function updatePattern(config) {
     bbLink.href = "https://www.braceletbook.com/";
     bbLink.title = bbLink.dataset.title;
   }
+}
+
+// create SVG Images
+document.addEventListener('be.configChanged', updatePatternAndPreview);
+function updatePatternAndPreview(evt) {
+  const config = evt.detail.config;
+  console.group(LOGGER, 'new svgs');
+
+  addSvg('pattern', view.createNormalPatternView, config);
+  let scale = (sessionStorage.getItem('braceletedit.scale') || '4,5')
+          .split(',').map(Number);
+  addSvg('preview', cfg => view.createSmallView(cfg, scale[0], scale[1]), config);
+  console.groupEnd();
 }
 
 function addSvg(parentId, generator, config) {
@@ -126,13 +150,23 @@ function initPage() {
     loadPattern(infile)
   ]).then(_ => {
     console.debug(LOGGER, "config files loaded.");
-    window.dispatchEvent(new CustomEvent('configLoaded'));
+    document.dispatchEvent(new CustomEvent('be.configLoaded'));
   });
-
-  initScaleMenu();
 
   console.debug(LOGGER, "waiting for config files to load...");
 }
+
+function initLoadedPage() {
+  console.group(LOGGER, 'content loaded');
+  makeDownloadLinks();
+  initScaleMenu();
+  initEditorActions();
+  console.groupEnd();
+}
+
+window.addEventListener('be.updateConfig', (event) => {
+  updatePattern(window.currentConfig);
+});
 
 document.addEventListener('be.loadExtension', e => loadExtension(e.detail));
 function loadExtension(detail) {
@@ -173,7 +207,7 @@ function loadExtension(detail) {
   extDiv.classList.add('collapse');
   extDiv.dataset.bsParent = '#extensions';
 
-  console.debug(LOGGER, typeof(detail.pageContent));
+  console.debug(LOGGER, typeof (detail.pageContent));
   if (detail.selector) {
     console.debug(LOGGER, detail.selector);
     //const frag = document.createDocumentFragment();
@@ -201,9 +235,15 @@ function loadExtension(detail) {
 //initPage();
 //export default initPage;
 //console.groupEnd("INIT out");
+function initEditorActions() {
+  const buttons = document.querySelectorAll('#editor input[type=button]');
+  for (let btn of buttons) {
+    btn.onclick = e => handleActions(e);
+  }
+  console.debug(LOGGER, buttons.length, "buttons");
+}
 
-
-window.handleActions = function (event) {
+function handleActions(event) {
   const t = event.target;
   event.stopPropagation();
 
@@ -245,7 +285,7 @@ window.handleActions = function (event) {
   } else {
     console.debug(LOGGER, 'handleActions', t);
   }
-};
+}
 
 
 function initScaleMenu() {
@@ -308,12 +348,6 @@ function downloadItemContent(parent) {
 }
 
 function makeDownloadLinks() {
-  if (document.readyState === 'loading') {
-    console.debug(LOGGER, 'wait for content loaded');
-    document.addEventListener('DOMContentLoaded', makeDownloadLinks);
-    return;
-  }
-  console.debug(LOGGER, 'content loaded');
   /*wn-item" href="#" data-download-file="patternedit.json">
    <svg class="bi theme-icon-active" style="width:.9em;height:.9em" fill="currentColor">
    <use xlink:href="res/bootstrap-icons/bootstrap-icons.svg#download"></use></svg>
@@ -413,6 +447,11 @@ function storeAsPng(svgid, filenamebase) {
 // execute on module load
 (() => {
   initPage();
-  makeDownloadLinks();
-  console.groupEnd();
+  if (document.readyState === 'loading') {
+    console.debug(LOGGER, 'wait for content loaded');
+    document.addEventListener('DOMContentLoaded', initLoadedPage);
+  } else {
+    initLoadedPage();
+  }
+  console.groupEnd(); // "init IN";
 })();
