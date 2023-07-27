@@ -120,7 +120,7 @@ class RawEditor {
       if (config.pattern[ridx][kidx] === 0)
         config.pattern[ridx][kidx] = 1;
 
-      updatePattern(config);
+      window.dispatchEvent(new CustomEvent('be.updateConfig'));
     }
   }
 
