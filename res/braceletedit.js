@@ -71,7 +71,7 @@ function updateExternalLink(evt) {
 document.addEventListener('be.configChanged', updatePatternAndPreview);
 function updatePatternAndPreview(evt) {
   const config = evt.detail.config;
-  console.group(LOGGER,'new svgs');
+  console.group(LOGGER, 'new svgs');
 
   addSvg('pattern', view.createNormalPatternView, config);
   let scale = (sessionStorage.getItem('braceletedit.scale') || '4,5')
@@ -156,7 +156,7 @@ function initPage() {
   console.debug(LOGGER, "waiting for config files to load...");
 }
 
-function initLoadedPage(){
+function initLoadedPage() {
   console.group(LOGGER, 'content loaded');
   makeDownloadLinks();
   initScaleMenu();
@@ -164,18 +164,82 @@ function initLoadedPage(){
   console.groupEnd();
 }
 
+window.addEventListener('be.updateConfig', (event) => {
+  updatePattern(window.currentConfig);
+});
+document.addEventListener('be.loadExtension', e => loadExtension(e.detail));
+function loadExtension(detail) {
+  const name = detail.name;
+  if (!name) {
+    throw detail;
+  }
+  if (!detail.pageContent) {
+    throw detail;
+  }
+
+  console.group(LOGGER, 'load extension', name);
+  let extId = 'extension-' + name;
+
+  //InsertionPoint in menu
+  const menuIP = document.getElementById('extensionsItems');
+  const menuItem = document.createElement('button');
+  menuItem.className = 'dropdown-item';
+  menuItem.dataset.bsToggle = 'collapse';
+  menuItem.dataset.bsTarget = '#' + extId;
+  menuItem.ariaExpanded = false;
+  menuItem.ariaControls = extId;
+  menuItem.textContent = detail.displayName || name;
+  //Insert Item after marker
+  menuIP.parentNode.insertBefore(menuItem, menuIP.nextSibling);
+
+  if (event.detail.styles) {
+    const styles = document.createElement('link');
+    styles.rel = 'stylesheet';
+    styles.type = 'text/css';
+    styles.href = detail.styles;
+    document.head.append(styles);
+  }
+
+  const extDiv = document.createElement('div');
+  extDiv.id = extId;
+  extDiv.classList.add('container');
+  extDiv.classList.add('collapse');
+  extDiv.dataset.bsParent = '#extensions';
+
+  if (detail.selector) {
+    console.debug(LOGGER, detail.selector);
+    //const frag = document.createDocumentFragment();
+    const div = document.createElement('div');
+    div.innerHTML = detail.pageContent;
+    console.debug(LOGGER, div);
+    console.debug(LOGGER, div.firstElementChild);
+    let content = div.querySelector(detail.selector);
+    console.debug(LOGGER, detail.selector, content);
+    extDiv.replaceChildren(content);
+  } else {
+    extDiv.innerHTML = detail.pageContent;
+  }
+
+  //TODO: Reihenfolge wichtig? Alphabetisch nach "name"?
+  document.getElementById('extensions').append(extDiv);
+
+  if (detail.init && typeof (detail.init) === 'function') {
+    detail.init();
+  }
+
+  console.groupEnd();
+}
+
 //initPage();
 //export default initPage;
 //console.groupEnd("INIT out");
-function initEditorActions(){
+function initEditorActions() {
   const buttons = document.querySelectorAll('#editor input[type=button]');
-  for(let btn of buttons){
-    btn.onclick = e=>handleActions(e);
+  for (let btn of buttons) {
+    btn.onclick = e => handleActions(e);
   }
   console.debug(LOGGER, buttons.length, "buttons");
-  document.forms.raweditor.addColor.onclick = e=>handleActions(e);
 }
-
 
 function handleActions(event) {
   const t = event.target;
@@ -219,8 +283,8 @@ function handleActions(event) {
       case 'addRowB':
       {
         const EoP = config.pattern.length;
-        config.pattern.push([...config.pattern[EoP-2]]);
-        config.pattern.push([...config.pattern[EoP-1]]);
+        config.pattern.push([...config.pattern[EoP - 2]]);
+        config.pattern.push([...config.pattern[EoP - 1]]);
         changed = true;
         break;
       }
@@ -238,22 +302,6 @@ function handleActions(event) {
         changed = true;
         break;
       }
-      case 'addColor':
-      {
-        const color = '#FF0000';
-        config.colors.push(color);
-        let colorName = String.fromCharCode(
-            'A'.charCodeAt(0) + config.colors.length - 1);
-        const rowTpl = document.getElementById("rawedit-color-row");
-        let row = rowTpl.content.cloneNode(true);
-        let picker = row.querySelector('input');
-        picker.setAttribute("name", "thread-" + colorName);
-        picker.setAttribute("title", "Faden " + colorName);
-        picker.setAttribute("value", color);
-
-        document.getElementById("rawedit-colors").append(row);
-        break;
-      }
       default:
         console.debug(LOGGER, 'handleActions', t.name, t);
     }
@@ -264,7 +312,7 @@ function handleActions(event) {
   } else {
     console.debug(LOGGER, 'handleActions', t);
   }
-};
+}
 
 
 function initScaleMenu() {
@@ -423,108 +471,13 @@ function storeAsPng(svgid, filenamebase) {
   img.src = url;
 }
 
-class RawEditor {
-  constructor() {
-    document.addEventListener("be.configChanged", ()=>this.updateEditor());
-    document.forms.raweditor.onsubmit = () => {
-      console.log(LOGGER, "update current view");
-
-      let config = {
-        _version: 1,
-        _format: 'braceletview',
-        meta: {
-          modified: new Date().toISOString()
-        }
-      };
-      if ("meta" in window.currentConfig) {
-        for (let key of Object.keys(window.currentConfig.meta)) {
-          if (!(key in config.meta)) {
-            config.meta[key] = window.currentConfig.meta[key];
-          }
-        }
-      }
-      config.colors = [];
-      for (let colorDef of document.getElementById("rawedit-colors")
-              .querySelectorAll('input')) {
-        config.colors.push(colorDef.value);
-      }
-
-      config.threads = document.forms.raweditor.threads.value.toUpperCase();
-      config.pattern = window.currentConfig.pattern; //TODO: get from form
-
-      //console.debug(LOGGER, config);
-      window.currentConfig = config;
-      updatePattern(config);
-
-      return false;
-    };
-  }
-
-  createNewConfig() {
-  }
-
-  updateEditor() {
-    console.group(LOGGER, "RawEditor", "update");
-    let config = window.currentConfig;
-    console.debug(LOGGER, "RawEditor", document.forms.raweditor);
-
-    document.forms.raweditor.threads.value = config.threads;
-
-    const colorRow = new DocumentFragment();
-    //farben
-    let colorIdx = 0;
-    const rowTpl = document.getElementById("rawedit-color-row");
-    for (const color of config.colors) {
-      let colorName = String.fromCharCode('A'.charCodeAt(0) + colorIdx);
-      let row = rowTpl.content.cloneNode(true);
-      let picker = row.querySelector('input');
-      picker.setAttribute("name", "thread-" + colorName);
-      picker.setAttribute("title", "Faden " + colorName);
-      picker.setAttribute("value", color);
-
-      colorRow.append(row);
-      ++colorIdx;
-    }
-    document.getElementById("rawedit-colors").replaceChildren(colorRow);
-
-    let svg=document.getElementById("pattern").shadowRoot.querySelector('svg');
-    console.debug(LOGGER,1,this);
-    svg.onclick = e => this.toggleKnot(e);
-    console.debug(2);
-
-    console.groupEnd();
-  }
-
-  toggleKnot(event) {
-    let knot = event.target.closest('.knot');
-    if(knot) {
-      let row = knot.parentNode;
-      let kidx = -1; //first sibling is rowmark
-      while(knot=knot.previousElementSibling)
-        ++kidx;
-      let ridx = 0;
-      while(row=row.previousElementSibling)
-        ++ridx;
-      //console.debug('knot', kidx, ridx);
-
-      let config = window.currentConfig;
-      config.pattern[ridx][kidx] = (config.pattern[ridx][kidx]+1)%5;
-      if(config.pattern[ridx][kidx]==0)
-        config.pattern[ridx][kidx] = 1;
-
-      updatePattern(config);
-    }
-  }
-}
-
 // execute on module load
 (() => {
-  new RawEditor();
   initPage();
   if (document.readyState === 'loading') {
     console.debug(LOGGER, 'wait for content loaded');
     document.addEventListener('DOMContentLoaded', initLoadedPage);
-  }else{
+  } else {
     initLoadedPage();
   }
   console.groupEnd(); // "init IN";

@@ -8,11 +8,10 @@
     <link rel="icon" type="image/png" href="res/favicon128.png" sizes="128x128">
     <link rel="icon" type="image/png" href="res/favicon256.png" sizes="256x256">
     <link rel="stylesheet" type="text/css" href="res/bootstrap/css/bootstrap.min.css">
-    <!--<link rel="stylesheet" type="text/css" href="res/bootstrap-icons/font/bootstrap-icons.min.css">-->
     <link rel="stylesheet" type="text/css" href="res/braceletview.css">
     <link rel="stylesheet" type="text/css" href="res/braceletedit.css">
-    <link rel="stylesheet" type="text/css" href="res/bootstrap/css/bootstrap.min.css">
     <script type="module" src="res/braceletedit.js"></script>
+    <script type="module" src="res/raweditor.js"></script>
     <script src="res/themeforbootstrap.js"></script>
   </head>
   <body>
@@ -92,13 +91,14 @@
                 Hilfe
               </a>
               <ul class="dropdown-menu">
-                <li>
+                <li><a class="dropdown-item" href="https://github.com/nigjo/braceleteditor/">Github Project</a></li>
+                <li class="dropdown-divider" id="extensionsItems"></li>
+                <!--li>
                   <a class="dropdown-item" href="#"
                      data-bs-toggle="collapse"
                      data-bs-target="#collapseOne" aria-expanded="false"
                      aria-controls="collapseOne">Ideenliste</a>
-                </li>
-                <li><a class="dropdown-item" href="https://github.com/nigjo/braceleteditor/">Github Project</a></li>
+                </li-->
               </ul>
             </li>
           </ul>
@@ -106,6 +106,7 @@
       </div>
     </nav>
     <main>
+      <div id="extensions"></div>
       <div id="brainstorming">
         <div id="collapseOne" class="collapse"
              data-bs-parent="#brainstorming">
@@ -118,42 +119,6 @@
             <li>Export für braceletbook.com und friendship-bracelets.net</li>
           </ul>
         </div>
-      </div><div id="rawedit">
-        <form id="raweditor" name="raweditor" class="container my-3 collapse show">
-          <div id="rawedit-meta"></div>
-          <div class="row row-cols-auto my-1">
-            <p class="col-2 form-label">Farben</p>
-            <div class="px-2 col-1">
-              <input class="btn btn-outline-secondary" type="button"
-                     name="addColor" value="&plus;" title="add new color">
-            </div>
-            <div class="px-2 col-9">
-              <div class="row row-cols-auto" id="rawedit-colors">
-              </div>
-            </div>
-            <template id="rawedit-color-row">
-              <div class="col">
-                <input class="form-control form-control-color" type="color"
-                       name="thread-?" title="Faden ?" value="#80FF00">
-              </div>
-            </template>
-          </div>
-          <div class="row row-cols-auto my-1">
-            <div class="col-2">
-              <label class="form-label" for="rawedit-threads">Fäden</label>
-            </div><div class="col-10 px-2">
-              <input class="form-control" id="rawedit-threads" size="20"
-                     placeholder="initial threads"
-                     name="threads"/>
-            </div>
-          </div>
-          <div class="row my-1" id="rawedit-pattern"></div>
-          <div class="row row-cols-auto my-1">
-            <div class="col btn-group" role="group">
-              <input class="btn btn-primary" type="submit" value="Aktualisieren"> 
-            </div>
-          </div>
-        </form>
       </div><div id="settings">
       </div><div class="container d-flex align-items-center flex-column">
         <div id="preview" data-download-file="preview.svg" data-download-caption="Vorschau"></div>
