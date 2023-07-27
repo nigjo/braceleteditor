@@ -167,6 +167,7 @@ function initLoadedPage() {
 window.addEventListener('be.updateConfig', (event) => {
   updatePattern(window.currentConfig);
 });
+
 document.addEventListener('be.loadExtension', e => loadExtension(e.detail));
 function loadExtension(detail) {
   const name = detail.name;
@@ -206,6 +207,7 @@ function loadExtension(detail) {
   extDiv.classList.add('collapse');
   extDiv.dataset.bsParent = '#extensions';
 
+  console.debug(LOGGER, typeof(detail.pageContent));
   if (detail.selector) {
     console.debug(LOGGER, detail.selector);
     //const frag = document.createDocumentFragment();
