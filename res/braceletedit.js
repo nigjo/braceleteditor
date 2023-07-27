@@ -133,6 +133,71 @@ function initPage() {
 
   console.debug(LOGGER, "waiting for config files to load...");
 }
+
+document.addEventListener('be.loadExtension', e => loadExtension(e.detail));
+function loadExtension(detail) {
+  const name = detail.name;
+  if (!name) {
+    throw detail;
+  }
+  if (!detail.pageContent) {
+    throw detail;
+  }
+
+  console.group(LOGGER, 'load extension', name);
+  let extId = 'extension-' + name;
+
+  //InsertionPoint in menu
+  const menuIP = document.getElementById('extensionsItems');
+  const menuItem = document.createElement('button');
+  menuItem.className = 'dropdown-item';
+  menuItem.dataset.bsToggle = 'collapse';
+  menuItem.dataset.bsTarget = '#' + extId;
+  menuItem.ariaExpanded = false;
+  menuItem.ariaControls = extId;
+  menuItem.textContent = detail.displayName || name;
+  //Insert Item after marker
+  menuIP.parentNode.insertBefore(menuItem, menuIP.nextSibling);
+
+  if (event.detail.styles) {
+    const styles = document.createElement('link');
+    styles.rel = 'stylesheet';
+    styles.type = 'text/css';
+    styles.href = detail.styles;
+    document.head.append(styles);
+  }
+
+  const extDiv = document.createElement('div');
+  extDiv.id = extId;
+  extDiv.classList.add('container');
+  extDiv.classList.add('collapse');
+  extDiv.dataset.bsParent = '#extensions';
+
+  console.debug(LOGGER, typeof(detail.pageContent));
+  if (detail.selector) {
+    console.debug(LOGGER, detail.selector);
+    //const frag = document.createDocumentFragment();
+    const div = document.createElement('div');
+    div.innerHTML = detail.pageContent;
+    console.debug(LOGGER, div);
+    console.debug(LOGGER, div.firstElementChild);
+    let content = div.querySelector(detail.selector);
+    console.debug(LOGGER, detail.selector, content);
+    extDiv.replaceChildren(content);
+  } else {
+    extDiv.innerHTML = detail.pageContent;
+  }
+
+  //TODO: Reihenfolge wichtig? Alphabetisch nach "name"?
+  document.getElementById('extensions').append(extDiv);
+
+  if (detail.init && typeof (detail.init) === 'function') {
+    detail.init();
+  }
+
+  console.groupEnd();
+}
+
 //initPage();
 //export default initPage;
 //console.groupEnd("INIT out");

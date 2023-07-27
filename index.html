@@ -8,10 +8,8 @@
     <link rel="icon" type="image/png" href="res/favicon128.png" sizes="128x128">
     <link rel="icon" type="image/png" href="res/favicon256.png" sizes="256x256">
     <link rel="stylesheet" type="text/css" href="res/bootstrap/css/bootstrap.min.css">
-    <!--<link rel="stylesheet" type="text/css" href="res/bootstrap-icons/font/bootstrap-icons.min.css">-->
     <link rel="stylesheet" type="text/css" href="res/braceletview.css">
     <link rel="stylesheet" type="text/css" href="res/braceletedit.css">
-    <link rel="stylesheet" type="text/css" href="res/bootstrap/css/bootstrap.min.css">
     <script type="module" src="res/braceletedit.js"></script>
     <script src="res/themeforbootstrap.js"></script>
   </head>
@@ -92,13 +90,8 @@
                 Hilfe
               </a>
               <ul class="dropdown-menu">
-                <li>
-                  <a class="dropdown-item" href="#"
-                     data-bs-toggle="collapse"
-                     data-bs-target="#collapseOne" aria-expanded="false"
-                     aria-controls="collapseOne">Ideenliste</a>
-                </li>
                 <li><a class="dropdown-item" href="https://github.com/nigjo/braceleteditor/">Github Project</a></li>
+                <li class="dropdown-divider" id="extensionsItems"></li>
               </ul>
             </li>
           </ul>
@@ -106,11 +99,11 @@
       </div>
     </nav>
     <main>
-      <div id="brainstorming">
-        <div id="collapseOne" class="collapse"
-             data-bs-parent="#brainstorming">
-          <h3>Ideenliste</h3>
-          <ul class="card card-body">
+      <div id="extensions"></div>
+      <template id="brainstorming">
+        <div class="card card-body">
+          <h3 class="card-title">Ideenliste</h3>
+          <ul class="card-text">
             <li>Anzeige wie die bracelet SVGs</li>
             <li>Farbänderung per klick auf die Knoten</li>
             <li>Automatische Fadenführung suchen (Hauptzweck)</li>
@@ -118,7 +111,18 @@
             <li>Export für braceletbook.com und friendship-bracelets.net</li>
           </ul>
         </div>
-      </div><div id="settings">
+      </template><script type="module">
+        setTimeout(() => {
+          document.dispatchEvent(new CustomEvent('be.loadExtension', {
+            detail: {
+              name:"brainstorm",
+              displayName:"Ideenliste",
+              pageContent:
+                document.getElementById('brainstorming').innerHTML
+            }
+          }));
+        }, 0);
+      </script><div id="settings">
       </div><div class="container d-flex align-items-center flex-column">
         <div id="preview" data-download-file="preview.svg" data-download-caption="Vorschau"></div>
       </div><div id="editor"><form name="editor" class="editorlayouter" onclick="handleActions(event);">
