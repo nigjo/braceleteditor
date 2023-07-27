@@ -11,6 +11,7 @@
     <link rel="stylesheet" type="text/css" href="res/braceletview.css">
     <link rel="stylesheet" type="text/css" href="res/braceletedit.css">
     <script type="module" src="res/braceletedit.js"></script>
+    <script type="module" src="res/raweditor.js"></script>
     <script type="module" src="res/brainstorm.js"></script>
     <script src="res/themeforbootstrap.js"></script>
   </head>
@@ -103,31 +104,32 @@
       <div id="extensions"></div>
       <div class="container d-flex align-items-center flex-column">
         <div id="preview" data-download-file="preview.svg" data-download-caption="Vorschau"></div>
-      </div><div id="editor"><form name="editor" class="editorlayouter">
+      </div><div id="editor"><form name="editor" class="container editorlayouter">
           <div class="left"></div>
           <div class="center"></div>
           <div class="right"></div>
           <div class="left actions">
-            <input type="button" name="addStringL" value="+" title="add new string">
-            <input type="button" name="remStringL" value="-" title="remove new string">
+            <input class="btn btn-sm btn-outline-primary" type="button" name="addStringL" value="&plus;" title="add new string">
+            <input class="btn btn-sm btn-outline-secondary" type="button" name="remStringL" value="&minus;" title="remove new string">
           </div>
           <div class="center actions">
-            <input type="button" name="addRowT" value="+" title="add two new rows">
-            <input type="button" name="remRowT  " value="-" title="remove last two rows">
+            <input class="btn btn-sm btn-outline-primary" type="button" name="addRowT" value="&plus;" title="add two new rows">
+            <input class="btn btn-sm btn-outline-secondary" type="button" name="remRowT" value="&minus;" title="remove last two rows">
           </div>
           <div class="right actions">
-            <input type="button" name="addStringR" value="+" title="add new string">
-            <input type="button" name="remStringR" value="-" title="remove new string">
+            <input class="btn btn-sm btn-outline-primary" type="button" name="addStringR" value="&plus;" title="add new string">
+            <input class="btn btn-sm btn-outline-secondary" type="button" name="remStringR" value="&minus;" title="remove new string">
           </div>
           <!-- PATTERN START -->
           <div class="left"></div>
-          <div id="pattern" data-download-file="pattern.svg" data-download-caption="Pattern"></div>
+          <div id="pattern"
+               data-download-file="pattern.svg" data-download-caption="Pattern">Bitte warten...</div>
           <div class="right"></div>
           <!-- PATTERN END -->
           <div class="left"></div>
           <div class="center actions">
-            <input type="button" name="addRowB" value="+" title="add two new rows">
-            <input type="button" name="remRowB" value="-" title="remove last two rows">
+            <input class="btn btn-sm btn-outline-primary" type="button" name="addRowB" value="&plus;" title="add two new rows">
+            <input class="btn btn-sm btn-outline-secondary" type="button" name="remRowB" value="&minus;" title="remove last two rows">
           </div>
           <div class="right">
           </div>
@@ -140,7 +142,7 @@
             <img src="res/favicon64.png" style="height:1.5em;width:1.5em;"
                  width="24" height="24" alt="favicon">
           </a>
-          <span class="mb-3 mb-md-0 text-body-secondary">© 2023 Jens Hofschröer</span>
+          <span class="mb-3 mb-md-0 text-body-secondary">Editor © 2023 Jens Hofschröer</span>
         </div>
 
         <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">

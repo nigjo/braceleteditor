@@ -207,7 +207,7 @@ function loadExtension(detail) {
   extDiv.classList.add('collapse');
   extDiv.dataset.bsParent = '#extensions';
 
-  console.debug(LOGGER, typeof (detail.pageContent));
+  console.debug(LOGGER, typeof(detail.pageContent));
   if (detail.selector) {
     console.debug(LOGGER, detail.selector);
     //const frag = document.createDocumentFragment();
@@ -272,6 +272,35 @@ function handleActions(event) {
         for (let r of config.pattern) {
           r.splice(atleft ? 0 : r.length - 1, 1);
         }
+        changed = true;
+        break;
+      }
+      case 'addRowT':
+      {
+        config.pattern.unshift([...config.pattern[1]]);//copy of old 2nd row
+        config.pattern.unshift([...config.pattern[1]]);//copy of old 1nd row
+        changed = true;
+        break;
+      }
+      case 'addRowB':
+      {
+        const EoP = config.pattern.length;
+        config.pattern.push([...config.pattern[EoP - 2]]);
+        config.pattern.push([...config.pattern[EoP - 1]]);
+        changed = true;
+        break;
+      }
+      case 'remRowT':
+      {
+        config.pattern.shift();
+        config.pattern.shift();
+        changed = true;
+        break;
+      }
+      case 'remRowB':
+      {
+        config.pattern.pop();
+        config.pattern.pop();
         changed = true;
         break;
       }
