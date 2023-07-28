@@ -3,44 +3,81 @@ const LOGGER = 'EDITOR';
 
 console.group(LOGGER, "INIT in");
 
-function loadPattern(patternName) {
-  return fetch('./pattern/'
-          + patternName
-          .replaceAll('\\', '/')
-          .replaceAll('../', '')
-          + '.json'
-          ).then(r => {
-    if (r.ok)
-      return r.json();
-    throw r;
-  }).then(config => {
-    if (config._version === 1 &&
-            config._format === 'braceletview') {
-      window.currentConfig = config;
-
-      updatePattern(config);
-    } else {
-      throw 'no valid data found';
-    }
-  });
+export function fireEditorEvent(eventtype, detail = null) {
+  if (detail) {
+    document.dispatchEvent(new CustomEvent(eventtype, {detail: detail}));
+  } else {
+    document.dispatchEvent(new CustomEvent(eventtype));
+  }
 }
 
-function updatePattern(config) {
-  console.group(LOGGER, "updatePattern");
-  document.dispatchEvent(
-          new CustomEvent('be.configChanged', {detail: {config: config}}));
-  console.groupEnd();
-}
+class ConfigStorage {
 
-// update storage and "configecho"
-document.addEventListener('be.configChanged', updateStorage);
-function updateStorage(evt) {
-  const config = evt.detail.config;
-  let cfgJson = JSON.stringify(config, null, '  ')
-          .replaceAll(/\n\s+(\d)(\n\s+)?/gs, '$1');
-  sessionStorage.setItem('braceletedit.config', cfgJson);
-  document.getElementById("configecho").textContent = cfgJson;
+  static CONFIG_CHANGED_EVENT = 'be.configChanged';
+
+  constructor() {
+    // update storage and "configecho"
+    document.addEventListener('be.configChanged', e => this.updateStorage(e));
+    document.addEventListener('be.updateConfig', (event) => {
+      let cfg = event.detail.config || configManager.getConfig();
+      updatePattern(cfg);
+    });
+    this.config = {
+      _version: 1,
+      _format: 'braceletview',
+      meta: {},
+      colors: [],
+      threads: "",
+      pattern: []
+    };
+  }
+
+  updateStorage(evt) {
+    const config = evt.detail.config;
+    let cfgJson = JSON.stringify(config, null, '  ')
+            .replaceAll(/\n\s+(\d)(\n\s+)?/gs, '$1');
+    sessionStorage.setItem('braceletedit.config', cfgJson);
+    document.getElementById("configecho").textContent = cfgJson;
+  }
+
+  loadConfig() {
+    return JSON.parse(sessionStorage.getItem('braceletedit.config'));
+  }
+
+  getConfig() {
+    return this.config || this.loadConfig();
+  }
+
+  updateConfig(nextConfig) {
+    console.group(LOGGER, "updateConfig");
+    this.config = nextConfig;
+    //updatePattern(nextConfig);
+    fireEditorEvent(ConfigStorage.CONFIG_CHANGED_EVENT, {config: nextConfig});
+    console.groupEnd();
+  }
+
+  loadPattern(patternName) {
+    return fetch('./pattern/'
+            + patternName
+            .replaceAll('\\', '/')
+            .replaceAll('../', '')
+            + '.json'
+            ).then(r => {
+      if (r.ok)
+        return r.json();
+      throw r;
+    }).then(config => {
+      if (config._version === 1 &&
+              config._format === 'braceletview') {
+        this.updateConfig(config);
+      } else {
+        throw 'no valid data found';
+      }
+    });
+  }
+
 }
+export const configManager = new ConfigStorage();
 
 // update braceletbook.com link
 document.addEventListener('be.configChanged', updateExternalLink);
@@ -99,6 +136,8 @@ function addSvg(parentId, generator, config) {
 
   const patternShadow = patternDiv.shadowRoot || patternDiv.attachShadow({mode: "open"});
   patternShadow.replaceChildren(patternView);
+
+  fireEditorEvent('be.svgChanged', {id: parentId});
 }
 
 function initKnownPatternList() {
@@ -147,10 +186,10 @@ function initPage() {
 
   Promise.all([
     initKnownPatternList(),
-    loadPattern(infile)
+    configManager.loadPattern(infile)
   ]).then(_ => {
     console.debug(LOGGER, "config files loaded.");
-    document.dispatchEvent(new CustomEvent('be.configLoaded'));
+    fireEditorEvent('be.configLoaded');
   });
 
   console.debug(LOGGER, "waiting for config files to load...");
@@ -163,10 +202,6 @@ function initLoadedPage() {
   initEditorActions();
   console.groupEnd();
 }
-
-window.addEventListener('be.updateConfig', (event) => {
-  updatePattern(window.currentConfig);
-});
 
 document.addEventListener('be.loadExtension', e => loadExtension(e.detail));
 function loadExtension(detail) {
@@ -248,7 +283,7 @@ function handleActions(event) {
   event.stopPropagation();
 
   if (t.type && t.type === 'button') {
-    const config = window.currentConfig;
+    const config = configManager.getConfig();
     let changed = false;
     switch (t.name) {
       case 'addStringL':
@@ -309,7 +344,7 @@ function handleActions(event) {
     }
 
     if (changed) {
-      updatePattern(config);
+      configManager.updateConfig(config);
     }
   } else {
     console.debug(LOGGER, 'handleActions', t);
@@ -343,8 +378,8 @@ function initScaleMenu() {
       current = item;
       current.classList.add("active");
 
-      let cfg = JSON.parse(sessionStorage.getItem('braceletedit.config'));
-      addSvg('preview', cfg => view.createSmallView(cfg, scale[0], scale[1]), cfg);
+      addSvg('preview', cfg => view.createSmallView(cfg, scale[0], scale[1]),
+              configManager.getConfig());
     };
   }
 }
