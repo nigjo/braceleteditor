@@ -265,7 +265,7 @@ export function createNormalPatternView(config) {
 
   let width = Math.floor(threadCount * deltaX) + 2 * borderX;
   let height = Math.floor((rowCount + 1) * deltaY + 3 * textheight);
-  const svg = createSvgSceleton(width, height, config);
+  const svg = createSvgSkeleton(width, height, config);
 
   let defs = document.createElementNS(SVGNS, "defs");
   let arrows = createArrows();
@@ -324,7 +324,7 @@ export function createNormalPatternView(config) {
   return root;
 }
 
-function createSvgSceleton(width, height, config) {
+function createSvgSkeleton(width, height, config) {
   let svg = document.createElementNS(SVGNS, "svg");
   svg.setAttribute('xmlns', "http://www.w3.org/2000/svg");
   svg.setAttribute('version', "1.0");
@@ -428,7 +428,7 @@ export function createSmallView(config, scaleX = 3, scaleY = 4) {
 
   let width = Math.floor((maxrows + 1) * SV_DELTA_X);
   let height = Math.floor((threadCount + 1) * SV_DELTA_Y + 24);
-  const svg = createSvgSceleton(width, height, config);
+  const svg = createSvgSkeleton(width, height, config);
 
   let defs = document.createElementNS(SVGNS, "defs");
   //let arrows = createArrows();
