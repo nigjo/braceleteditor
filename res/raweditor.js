@@ -13,17 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import {configManager} from './braceletedit.js';
 const LOGGER = 'RAWEDITOR';
+
 class RawEditor {
+
   constructor() {
-    document.addEventListener("be.configChanged", () => this.updateEditor());
     if (document.readyState === 'loading') {
       throw 'document not loaded';
     }
+    document.addEventListener("be.svgChanged", e => {
+      if (e.detail.id === "pattern") {
+        this.updateEditor();
+      }
+    });
   }
 
   initActions() {
-    document.forms.raweditor.onsubmit = () => {
+    const raweditor = document.forms.raweditor;
+    raweditor.onsubmit = () => {
       try {
         this.updateConfig();
       } catch (e) {
@@ -31,43 +39,51 @@ class RawEditor {
       }
       return false;
     };
-    document.forms.raweditor.addColor.onclick = e => {
-      const config = window.currentConfig;
+    raweditor.addColor.onclick = e => {
+      const config = configManager.getConfig();
       const defaultColor = '#FF8833';
       config.colors.push(defaultColor);
       this.addColorButton(config.colors.length - 1, defaultColor);
+    };
+    raweditor.threads.onkeyup = e => {
+      let val = raweditor.threads.value;
+      //console.debug(LOGGER, val, raweditor.threads.dataset.stored);
+      if (val.toUpperCase() !== raweditor.threads.dataset.stored) {
+        this.setChanged();
+      }
     };
   }
 
   updateConfig() {
     console.log(LOGGER, "update current view");
 
-    let config = {
+    let nextConfig = {
       _version: 1,
       _format: 'braceletview',
       meta: {
         modified: new Date().toISOString()
       }
     };
-    if ("meta" in window.currentConfig) {
-      for (let key of Object.keys(window.currentConfig.meta)) {
-        if (!(key in config.meta)) {
-          config.meta[key] = window.currentConfig.meta[key];
+    const oldConfig = configManager.getConfig();
+
+    if ("meta" in oldConfig) {
+      for (let key of Object.keys(oldConfig.meta)) {
+        if (!(key in nextConfig.meta)) {
+          nextConfig.meta[key] = oldConfig.meta[key];
         }
       }
     }
-    config.colors = [];
+
+    nextConfig.colors = [];
     for (let colorDef of document.getElementById("rawedit-colors")
             .querySelectorAll('input')) {
-      config.colors.push(colorDef.value);
+      nextConfig.colors.push(colorDef.value);
     }
 
-    config.threads = document.forms.raweditor.threads.value.toUpperCase();
-    config.pattern = window.currentConfig.pattern; //TODO: get from form
+    nextConfig.threads = document.forms.raweditor.threads.value.toUpperCase();
+    nextConfig.pattern = oldConfig.pattern; //TODO: get from form
 
-    //console.debug(LOGGER, config);
-    window.currentConfig = config;
-    window.dispatchEvent(new CustomEvent('be.updateConfig'));
+    configManager.updateConfig(nextConfig);
   }
 
   setChanged() {
@@ -78,11 +94,16 @@ class RawEditor {
   }
 
   updateEditor() {
-    //console.group(LOGGER, "update");
-    let config = window.currentConfig;
+    console.group(LOGGER, "update");
+    let config = configManager.getConfig();
     //console.debug(LOGGER, document.forms.raweditor);
+    const raweditor = document.forms.raweditor;
 
-    document.forms.raweditor.threads.value = config.threads;
+    raweditor.threads.value
+            = raweditor.threads.dataset.stored
+            = config.threads;
+
+    console.debug(LOGGER, config.threads.length, "threads");
 
     const colorRow = new DocumentFragment();
     //farben
@@ -92,6 +113,7 @@ class RawEditor {
       this.addColorButton(colorIdx++, color, colorRow);
     }
     document.getElementById("rawedit-colors").replaceChildren(colorRow);
+    console.debug(LOGGER, colorIdx, "defined colors");
 
     let svg = document.getElementById("pattern").shadowRoot.querySelector('svg');
     //console.debug(LOGGER, 1, this);
@@ -100,7 +122,7 @@ class RawEditor {
 
     document.forms.raweditor.apply.classList.add('disabled');
 
-    //console.groupEnd();
+    console.groupEnd();
   }
 
   toggleKnot(event) {
@@ -108,19 +130,20 @@ class RawEditor {
     if (knot) {
       let row = knot.parentNode;
       let kidx = -1; //first sibling is rowmark
-      while (knot = knot.previousElementSibling)
+      while ((knot = knot.previousElementSibling))
         ++kidx;
       let ridx = 0;
-      while (row = row.previousElementSibling)
+      while ((row = row.previousElementSibling))
         ++ridx;
       //console.debug('knot', kidx, ridx);
 
-      let config = window.currentConfig;
+      let config = configManager.getConfig();
       config.pattern[ridx][kidx] = (config.pattern[ridx][kidx] + 1) % 5;
       if (config.pattern[ridx][kidx] === 0)
         config.pattern[ridx][kidx] = 1;
 
-      window.dispatchEvent(new CustomEvent('be.updateConfig'));
+      //doc.dispatchEvent(new CustomEvent('be.updateConfig'));
+      configManager.updateConfig(config);
     }
   }
 
@@ -170,7 +193,9 @@ class RawEditor {
         selector: '#raweditor',
         init: () => {
           editor.initActions();
-          editor.updateEditor();
+          const pat = document.getElementById('pattern');
+          if (pat.shadowRoot)
+            editor.updateEditor();
         }
       }
     }));
