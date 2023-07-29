@@ -529,7 +529,7 @@ function createStyles(colors, radius) {
   }
 
   let style = document.createElementNS(SVGNS, "style");
-  style.textContent = css;
+  style.textContent = css.replaceAll(/\n+\s*/gs,'');
   return style;
 }
 
