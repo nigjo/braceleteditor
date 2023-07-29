@@ -13,6 +13,10 @@
 .center{text-align: center;}
 .right{text-align:left;justify-self:right;overflow:hidden;}
 
+#loadConfigItem{
+  display:none;
+}
+
 @media print {
   .noprint,.actions{display:none;}
   #pattern{max-height: 90vh !important;}

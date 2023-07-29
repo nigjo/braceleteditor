@@ -8,7 +8,7 @@ export function fireEditorEvent(eventtype, detail = null) {
     document.dispatchEvent(new CustomEvent(eventtype, {detail: detail}));
   } else {
     document.dispatchEvent(new CustomEvent(eventtype));
-  }
+}
 }
 
 class ConfigStorage {
@@ -197,9 +197,12 @@ function initPage() {
 
 function initLoadedPage() {
   console.group(LOGGER, 'content loaded');
+
   makeDownloadLinks();
+  initUploadAction();
   initScaleMenu();
   initEditorActions();
+
   console.groupEnd();
 }
 
@@ -472,6 +475,31 @@ function makeDownloadLinks() {
     }
 
   }
+}
+
+function initUploadAction() {
+  const uploader = document.getElementById('loadConfigItem');
+  uploader.onchange = (e) => {
+    console.debug(LOGGER, 'upload', e);
+    console.debug(LOGGER, 'upload', uploader.files);
+    const reader = new FileReader();
+    reader.onload = () => {
+      const content = reader.result;
+      try {
+        let cfg = JSON.parse(content);
+        if (cfg._version === 1 &&
+                cfg._format === 'braceletview') {
+          configManager.updateConfig(cfg);
+        } else {
+          throw 'no valid data found';
+        }
+      } catch (e) {
+        console.error(e);
+        alert(e);
+      }
+    };
+    reader.readAsText(uploader.files[0]);
+  };
 }
 
 function storeAsPng(svgid, filenamebase) {
