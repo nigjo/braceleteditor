@@ -152,25 +152,39 @@ function initKnownPatternList() {
     const items = document.createDocumentFragment();
     for (let info of data.pattern) {
       const item = document.createElement('li');
-      if (info.name !== window.currentPattern) {
-        const link = document.createElement('a');
-        link.classList.add("dropdown-item");
-        let q = new URLSearchParams();
-        q.set('pattern', info.name);
-        link.href = '?' + q;
-        link.textContent = info.displayName || info.name;
-        item.append(link);
-      } else {
-        const itemText = document.createElement('span');
-        itemText.textContent = info.displayName || info.name;
-        itemText.classList.add("dropdown-item");
-        itemText.classList.add("active");
-        item.append(itemText);
+      const link = document.createElement('button');
+      link.classList.add("dropdown-item");
+      let q = new URLSearchParams();
+      q.set('pattern', info.name);
+      link.textContent = info.displayName || info.name;
+      link.onclick = e => {
+        window.currentPattern = info.name;
+        configManager.loadPattern(info.name);
+        setActive(link);
+      };
+      if (info.name === window.currentPattern) {
+        setActive(link);
       }
+
+      item.append(link);
       items.append(item);
     }
     navparent.replaceChildren(items);
   });
+}
+
+let currentActive;
+function setActive(link) {
+  if (currentActive) {
+    currentActive.classList.remove("active");
+    currentActive.classList.remove("pe-none");
+    currentActive = null;
+  }
+  if (link) {
+    link.classList.add("active");
+    link.classList.add("pe-none");
+    currentActive = link;
+  }
 }
 
 function initPage() {
