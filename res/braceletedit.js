@@ -69,6 +69,11 @@ class ConfigStorage {
     }).then(config => {
       if (config._version === 1 &&
               config._format === 'braceletview') {
+        if (!("meta" in config))
+          config.meta = {};
+        if (!("id" in config.meta))
+          config.meta.id = patternName;
+        console.debug(LOGGER, 'config', config);
         this.updateConfig(config);
       } else {
         throw 'no valid data found';
