@@ -1,3 +1,5 @@
+/* global Extension */
+"use strict";
 import * as view from "./braceletview.js";
 const LOGGER = 'EDITOR';
 
@@ -11,13 +13,13 @@ export function fireEditorEvent(eventtype, detail = null) {
 }
 }
 
-class ConfigStorage {
+export const CONFIG_CHANGED_EVENT = 'be.configChanged';
 
-  static CONFIG_CHANGED_EVENT = 'be.configChanged';
+class ConfigStorage {
 
   constructor() {
     // update storage and "configecho"
-    document.addEventListener('be.configChanged', e => this.updateStorage(e));
+    this.addChangeListener(e => this.updateStorage(e));
     document.addEventListener('be.updateConfig', (event) => {
       let cfg = event.detail.config || configManager.getConfig();
       updatePattern(cfg);
@@ -30,6 +32,10 @@ class ConfigStorage {
       threads: "",
       pattern: []
     };
+  }
+  
+  addChangeListener(listener){
+    document.addEventListener(CONFIG_CHANGED_EVENT, listener);
   }
 
   updateStorage(evt) {
@@ -52,7 +58,7 @@ class ConfigStorage {
     console.group(LOGGER, "updateConfig");
     this.config = nextConfig;
     //updatePattern(nextConfig);
-    fireEditorEvent(ConfigStorage.CONFIG_CHANGED_EVENT, {config: nextConfig});
+    fireEditorEvent(CONFIG_CHANGED_EVENT, {config: nextConfig});
     console.groupEnd();
   }
 
@@ -85,7 +91,7 @@ class ConfigStorage {
 export const configManager = new ConfigStorage();
 
 // update braceletbook.com link
-document.addEventListener('be.configChanged', updateExternalLink);
+configManager.addChangeListener(updateExternalLink);
 function updateExternalLink(evt) {
   const config = evt.detail.config;
 
@@ -110,7 +116,7 @@ function updateExternalLink(evt) {
 }
 
 // create SVG Images
-document.addEventListener('be.configChanged', updatePatternAndPreview);
+configManager.addChangeListener(updatePatternAndPreview);
 function updatePatternAndPreview(evt) {
   const config = evt.detail.config;
   console.group(LOGGER, 'new svgs');
@@ -221,70 +227,6 @@ function initLoadedPage() {
   initUploadAction();
   initScaleMenu();
   initEditorActions();
-
-  console.groupEnd();
-}
-
-document.addEventListener('be.loadExtension', e => loadExtension(e.detail));
-function loadExtension(detail) {
-  const name = detail.name;
-  if (!name) {
-    throw detail;
-  }
-  if (!detail.pageContent) {
-    throw detail;
-  }
-
-  console.group(LOGGER, 'load extension', name);
-  let extId = 'extension-' + name;
-
-  //InsertionPoint in menu
-  const menuIP = document.getElementById('extensionsItems');
-  const menuItem = document.createElement('button');
-  menuItem.className = 'dropdown-item';
-  menuItem.dataset.bsToggle = 'collapse';
-  menuItem.dataset.bsTarget = '#' + extId;
-  menuItem.ariaExpanded = false;
-  menuItem.ariaControls = extId;
-  menuItem.textContent = detail.displayName || name;
-  //Insert Item after marker
-  menuIP.parentNode.insertBefore(menuItem, menuIP.nextSibling);
-
-  if (event.detail.styles) {
-    const styles = document.createElement('link');
-    styles.rel = 'stylesheet';
-    styles.type = 'text/css';
-    styles.href = detail.styles;
-    document.head.append(styles);
-  }
-
-  const extDiv = document.createElement('div');
-  extDiv.id = extId;
-  extDiv.classList.add('container');
-  extDiv.classList.add('collapse');
-  extDiv.dataset.bsParent = '#extensions';
-
-  console.debug(LOGGER, typeof (detail.pageContent));
-  if (detail.selector) {
-    console.debug(LOGGER, detail.selector);
-    //const frag = document.createDocumentFragment();
-    const div = document.createElement('div');
-    div.innerHTML = detail.pageContent;
-    console.debug(LOGGER, div);
-    console.debug(LOGGER, div.firstElementChild);
-    let content = div.querySelector(detail.selector);
-    console.debug(LOGGER, detail.selector, content);
-    extDiv.replaceChildren(content);
-  } else {
-    extDiv.innerHTML = detail.pageContent;
-  }
-
-  //TODO: Reihenfolge wichtig? Alphabetisch nach "name"?
-  document.getElementById('extensions').append(extDiv);
-
-  if (detail.init && typeof (detail.init) === 'function') {
-    detail.init();
-  }
 
   console.groupEnd();
 }
