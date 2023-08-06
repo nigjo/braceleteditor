@@ -22,41 +22,40 @@ limitations under the License.
     <meta charset="UTF-8">
   </head>
   <body>
-      <form id="raweditor" name="raweditor">
-        <div id="rawedit-meta"></div>
-        <div class="row row-cols-auto my-1">
-          <p class="col-2 form-label">Farben</p>
-          <div class="px-2 col-1">
-            <input class="btn btn-outline-secondary" type="button"
-                   name="addColor" value="&plus;" title="add new color">
-          </div>
-          <div class="px-2 col-9">
-            <div class="row row-cols-auto" id="rawedit-colors">
-            </div>
-          </div>
-          <template id="rawedit-color-row">
-            <div class="colorbtn">
-              <input class="form-control form-control-color" type="color"
-                     name="thread-?" value="#80FF00">
-              <button type="button" class="btn-close colorbtn-close p-1 mx-0" aria-label="Close"></button>
-            </div>
-          </template>
+    <form id="raweditor" name="raweditor">
+      <div class="row row-cols-auto my-1">
+        <p class="col-2 form-label">Farben</p>
+        <div class="px-2 col-1">
+          <input class="btn btn-outline-secondary" type="button"
+                 name="addColor" value="&plus;" title="add new color">
         </div>
-        <div class="row row-cols-auto my-1">
-          <div class="col-2">
-            <label class="form-label" for="rawedit-threads">Fäden</label>
-          </div><div class="col-10 px-2">
-            <input class="form-control" id="rawedit-threads" size="20"
-                   placeholder="initial threads"
-                   name="threads"/>
+        <div class="px-2 col-9">
+          <div class="row row-cols-auto" id="rawedit-colors">
           </div>
         </div>
-        <div class="row my-1" id="rawedit-pattern"></div>
-        <div class="row row-cols-auto my-1">
-          <div class="col btn-group" role="group">
-            <input name="apply" class="btn btn-primary disabled" type="submit" value="Übernehmen"> 
+        <template id="rawedit-color-row">
+          <div class="colorbtn">
+            <input class="form-control form-control-color" type="color"
+                   name="thread-?" value="#80FF00">
+            <button type="button" class="btn-close colorbtn-close p-1 mx-0" aria-label="Close"></button>
           </div>
+        </template>
+      </div>
+      <div class="row row-cols-auto my-1">
+        <div class="col-2">
+          <label class="form-label" for="rawedit-threads">Fäden</label>
+        </div><div class="col-10 px-2">
+          <input class="form-control" id="rawedit-threads" size="20"
+                 placeholder="initial threads"
+                 name="threads"/>
         </div>
-      </form>
+      </div>
+      <div class="row my-1" id="rawedit-pattern"></div>
+      <div class="row row-cols-auto my-1">
+        <div class="col btn-group" role="group">
+          <input name="apply" class="btn btn-primary disabled" type="submit" value="Übernehmen"> 
+        </div>
+      </div>
+    </form>
   </body>
 </html>
