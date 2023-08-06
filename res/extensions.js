@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 const LOGGER = 'EXT';
-export class ExtensionEventData {
+export default class ExtensionEventData {
   constructor(details) {
     this.name = undefined;
     this.displayName = undefined;
