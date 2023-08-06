@@ -18,6 +18,7 @@ export default class ExtensionEventData {
   constructor(details) {
     this.name = undefined;
     this.displayName = undefined;
+    this.position = undefined;
     this.pageContent = undefined;
     this.pageFile = undefined;
     this.selector = undefined;
@@ -41,6 +42,37 @@ export default class ExtensionEventData {
       detail: this
     }));
   }
+}
+
+function insertInOrder(child, position, parent, precedingSibling = null) {
+  let next = precedingSibling
+          ? precedingSibling.nextElementSibling
+          : parent.firstElementChild;
+  while (next && next.dataset.bePos && next.dataset.bePos < position) {
+    next = next.nextElementSibling;
+  }
+  console.debug(LOGGER, 'next', next);
+  if (next)
+    parent.insertBefore(child, next);
+  else
+    parent.append(child);
+}
+
+function insertToMenu(extId, extData) {
+  const menuIP = document.getElementById('extensionsItems');
+  const menuItem = document.createElement('button');
+
+  var position = extData.position || (extData.name.charCodeAt(0) * 4096);
+
+  menuItem.className = 'dropdown-item';
+  menuItem.dataset.bsToggle = 'collapse';
+  menuItem.dataset.bsTarget = '#' + extId;
+  menuItem.ariaExpanded = false;
+  menuItem.ariaControls = extId;
+  menuItem.textContent = extData.displayName || name;
+  menuItem.dataset.bePos = position;
+  //Insert Item after marker
+  insertInOrder(menuItem, position, menuIP.parentNode, menuIP);
 }
 
 document.addEventListener('be.loadExtension', e => loadExtension(e.detail));
@@ -74,16 +106,7 @@ function loadExtension(detail) {
   let extId = 'extension-' + name;
 
   //InsertionPoint in menu
-  const menuIP = document.getElementById('extensionsItems');
-  const menuItem = document.createElement('button');
-  menuItem.className = 'dropdown-item';
-  menuItem.dataset.bsToggle = 'collapse';
-  menuItem.dataset.bsTarget = '#' + extId;
-  menuItem.ariaExpanded = false;
-  menuItem.ariaControls = extId;
-  menuItem.textContent = extData.displayName || name;
-  //Insert Item after marker
-  menuIP.parentNode.insertBefore(menuItem, menuIP.nextSibling);
+  insertToMenu(extId, extData);
 
   if (extData.styles) {
     const styles = document.createElement('link');
@@ -98,6 +121,8 @@ function loadExtension(detail) {
   extDiv.classList.add('container');
   extDiv.classList.add('collapse');
   extDiv.dataset.bsParent = '#extensions';
+  var position = extData.position || (extData.name.charCodeAt(0) * 4096);
+  extDiv.dataset.bePos = position;
 
   console.debug(LOGGER, typeof (extData.pageContent));
   if (extData.selector) {
@@ -115,7 +140,8 @@ function loadExtension(detail) {
   }
 
   //TODO: Reihenfolge wichtig? Alphabetisch nach "name"?
-  document.getElementById('extensions').append(extDiv);
+  insertInOrder(extDiv, position, document.getElementById('extensions'))
+  //document.getElementById('extensions').append(extDiv);
 
   if (extData.init && typeof (extData.init) === 'function') {
     extData.init();
