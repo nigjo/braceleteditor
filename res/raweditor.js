@@ -188,6 +188,7 @@ class RawEditor {
     new ExtensionEventData({
         name: 'rawedit',
         displayName: 'Farben und Fäden',
+        position: 1000,
         styles: 'res/raweditor.css',
         pageContent: text,
         selector: '#raweditor',

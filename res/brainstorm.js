@@ -31,5 +31,6 @@ const pageContent = `
 new ExtensionEventData({
   name: "brainstorm",
   displayName: "Ideenliste",
-  pageContent: pageContent
+  pageContent: pageContent,
+  position: 99999
 }).dispatch();
