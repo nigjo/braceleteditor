@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import {configManager} from './braceletedit.js';
+import ExtensionEventData from './extensions.js';
 const LOGGER = 'RAWEDITOR';
 
 class RawEditor {
@@ -184,8 +185,7 @@ class RawEditor {
     throw r;
   }).then(text => {
     const editor = new RawEditor();
-    document.dispatchEvent(new CustomEvent('be.loadExtension', {
-      detail: {
+    new ExtensionEventData({
         name: 'rawedit',
         displayName: 'Farben und Fäden',
         styles: 'res/raweditor.css',
@@ -197,8 +197,7 @@ class RawEditor {
           if (pat.shadowRoot)
             editor.updateEditor();
         }
-      }
-    }));
+    }).dispatch();
     //editor.updateEditor();
   });
 })();

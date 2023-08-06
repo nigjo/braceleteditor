@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2023 nigjo.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+import ExtensionEventData from './extensions.js';
 
 const pageContent = `
   <div class="card card-body">
@@ -28,13 +28,8 @@ const pageContent = `
   </div>
 `;
 
-setTimeout(() => {
-  document.dispatchEvent(new CustomEvent('be.loadExtension', {
-    detail: {
-      name: "brainstorm",
-      displayName: "Ideenliste",
-      pageContent: pageContent
-    }
-  }));
-}, 0);
-      
+new ExtensionEventData({
+  name: "brainstorm",
+  displayName: "Ideenliste",
+  pageContent: pageContent
+}).dispatch();
