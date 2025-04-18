@@ -367,6 +367,8 @@ export function createSmallView(config, scaleX = 3, scaleY = 4) {
     //console.debug('ADDROW', threads);
 
     let y = SV_DELTA_Y * (row.length - 1) - fullrow ? 0 : SV_RY;
+    if (row.length === 1)
+      y = 0;
 
     for (let k of row) {
       let tidx = index * 2 - (fullrow ? 0 : 1);
