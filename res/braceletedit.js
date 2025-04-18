@@ -33,8 +33,8 @@ class ConfigStorage {
       pattern: []
     };
   }
-  
-  addChangeListener(listener){
+
+  addChangeListener(listener) {
     document.addEventListener(CONFIG_CHANGED_EVENT, listener);
   }
 
@@ -265,6 +265,9 @@ function handleActions(event) {
       case 'remStringL':
       case 'remStringR':
       {
+        if (config.threads.length <= 4) {
+          return;
+        }
         let atleft = t.name === 'remStringL';
         config.threads = atleft ? config.threads.substring(2) : config.threads.substring(0, config.threads.length - 2);
         console.debug(LOGGER, t.name, atleft);
